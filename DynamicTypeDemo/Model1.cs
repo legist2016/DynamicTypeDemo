@@ -22,6 +22,7 @@ namespace DynamicTypeDemo
         {
             //modelBuilder.RegisterEntityType(typeof(T_CM_PRODUCT));
             modelBuilder.RegisterEntityType(type);
+
         }
 
         public object getdata()
