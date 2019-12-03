@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
+using System.Data.Entity.Migrations.Sql;
 using System.Data.Entity.SqlServer;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Linq;
-
+using System.Data.Entity.Infrastructure.Annotations;
 
 namespace DynamicTypeDemo.Template
 {
@@ -95,6 +96,29 @@ namespace DynamicTypeDemo.Template
 
 
             return typeBuilder.CreateType();
+        }
+
+        public static string SQLGenerateAlterTable(this TableTemplate template, string tableName)
+        {
+            SqlServerMigrationSqlGenerator gen = new SqlServerMigrationSqlGenerator();
+            var operations = new List<MigrationOperation>();
+            var dict = new Dictionary<string, AnnotationValues>();
+            dict.Add("dddddd", new AnnotationValues(1, 2));
+            var alter = new AlterTableOperation("dddd", dict);
+            
+            
+            //alter.Columns.Add(new ColumnModel(PrimitiveTypeKind.String) { Name="dd" });
+            
+            
+            //operations.Add(alter);
+            operations.Add(new AddColumnOperation("dddd", new ColumnModel(PrimitiveTypeKind.String) { Name = "dd" }));
+            operations.Add(new AlterColumnOperation("dddd", new ColumnModel(PrimitiveTypeKind.String) { Name = "dd3",MaxLength=20 },false));
+            operations.Add(new AlterColumnOperation("dddd", new ColumnModel(PrimitiveTypeKind.String) { Name = "dd2",MaxLength=50 },false));
+            operations.Add(new RenameColumnOperation("dddd","dd3","ee3"));
+
+            var sqls = gen.Generate(operations, "2008").Select<MigrationStatement, string>(ms=>ms.Sql).ToArray();
+            var sql = string.Join("\r\n\r\n",sqls);
+            return sql;
         }
 
         public static string SQLGenerateCreateTable(this TableTemplate template, string tableName)

@@ -14,6 +14,7 @@ namespace DynamicTypeDemo
         public Model1(List<Type> types = null)
             : base("name=Model1")
         {
+            Database.SetInitializer<Model1>(null);
             //type = TypeCreator.Creator("T_TEST", 10);
             Types = types;
         }
