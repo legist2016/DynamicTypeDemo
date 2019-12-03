@@ -8,7 +8,7 @@ namespace DynamicTypeDemo.Template
 {
     public enum TableTemplateFieldType
     {
-        Int,
+        Int=1,
         String
     }
     public class TableTemplateField

@@ -5,50 +5,42 @@ namespace DynamicTypeDemo
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Collections.Generic;
 
     public partial class Model1 : DbContext
     {
-        public Model1()
+        public List<Type> Types { get; set; }
+
+        public Model1(List<Type> types = null)
             : base("name=Model1")
         {
-            type = TypeCreator.Creator("T_TEST", 10);
+            //type = TypeCreator.Creator("T_TEST", 10);
+            Types = types;
         }
 
         //public virtual DbSet<T_CM_ORDER> T_CM_ORDER { get; set; }
 
-        public Type type { get; set; }
+        //public Type type { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             //modelBuilder.RegisterEntityType(typeof(T_CM_PRODUCT));
-            modelBuilder.RegisterEntityType(type);
+            //modelBuilder.RegisterEntityType(type);
+            if (Types != null)
+            {
+                foreach (var type in Types)
+                {
+                    modelBuilder.RegisterEntityType(type);
+                }
+            }
 
         }
 
-        public object getdata()
+        public object getdata(Type type, string id, object value)
         {
-            /*var method = this.GetType().GetMethod("Set", new Type[] { });
-            method = method.MakeGenericMethod(type);
-            object set = method.Invoke(this, null);
-            method = typeof(Enumerable).GetMethod("ToList");
-            method = method.MakeGenericMethod(type);
-            object obj = method.Invoke(null, new object[] { set });*/
-            var where = CallMethod("where", new Type[] { type, typeof(int) }, new object[] { "id", 1 });
+            var where = CallMethod("where", new Type[] { type, typeof(int) }, new object[] { id, value });
             var list = CallMethod("queryData", new Type[] { type }, new object[] { this, where });
             return list;
-            /*Type ettype = typeof(T_CM_PRODUCT);
-            Type dbtype = db.GetType();
-            var method = dbtype.GetMethod("Set", new Type[] { });
-            method = method.MakeGenericMethod(ettype);
-            object set = method.Invoke(db, null);
-
-            var property = set.GetType().GetProperty("Sql");
-            var sql = property.GetValue(set);
-
-            var list = db.Set<T_CM_PRODUCT>();
-            method = typeof(Enumerable).GetMethod("ToList");
-            method = method.MakeGenericMethod(typeof(T_CM_PRODUCT));
-            obj = method.Invoke(null,new object[] { list });*/
 
         }
         static public object CallMethod(string method, Type[] genericMethodTypes, object[] parameters = null)
