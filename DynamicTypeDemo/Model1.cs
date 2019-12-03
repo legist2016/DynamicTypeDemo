@@ -20,6 +20,7 @@ namespace DynamicTypeDemo
 
         //public virtual DbSet<T_CM_ORDER> T_CM_ORDER { get; set; }
 
+
         //public Type type { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
