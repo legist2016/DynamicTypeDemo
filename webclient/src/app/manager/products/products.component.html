@@ -1,0 +1,12 @@
+<ag-grid-angular style="height: 500px;" class="ag-theme-balham" [localeText]='localeText' rowSelection="multiple"
+    [rowData]="ds.products" [columnDefs]="columnDefs" (rowDoubleClicked)="onRowDbclick($event)"
+    (gridReady)="gridReady($event)"></ag-grid-angular>
+<button (click)="new()">新建</button><button (click)="del()">删除</button>
+<app-popup *ngIf="newProduct" (close)="onNewProductSave(null)">
+    <app-product-edit (save)="onNewProductSave($event)" [product]="newProduct"></app-product-edit>
+</app-popup>
+
+<app-popup *ngIf="editProduct" (close)="onEditProductSave(null)">
+    <app-product-edit (save)="onEditProductSave($event)" [product]="editProduct"></app-product-edit>
+</app-popup>
+<app-conver *ngIf="ds.querying"></app-conver>

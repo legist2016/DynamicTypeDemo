@@ -1,0 +1,217 @@
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+/* Global Styles */
+
+* {
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #616161;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+router-outlet + *  {
+  padding: 0 16px;
+  
+}
+
+/* Text */
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 20px;
+}
+h3 {
+  font-size: 16px;
+}
+
+h1, h2 , h3 {
+  font-weight: bolder;
+  margin: 10px;
+}
+
+p {
+  font-size: 14px;
+}
+
+/* Hyperlink */
+
+a {
+  cursor: pointer;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Input */
+
+input {
+  
+  border-radius: 2px;
+  padding: 0;  
+  border: 1px solid #BDBDBD;
+}
+
+input.ng-invalid{
+  border-color: red;
+}
+
+label1 {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+  text-transform: uppercase;
+}
+
+/* Button */
+.button, button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  margin: 4px 8px
+}
+
+.button:hover, button:hover {
+  opacity: 0.8;
+  font-weight: normal;
+}
+
+.button:disabled, button:disabled {
+  opacity: 0.5;
+  cursor: auto;
+}
+
+/* Fancy Button */
+
+.fancy-button {
+  background-color: white;
+  color: #1976d2;
+}
+
+.fancy-button i.material-icons {
+  color: #1976d2;
+  padding-right: 4px;
+}
+
+/* Top Bar */
+
+app-top-bar {
+  width: 100%;
+  height: 68px;
+  background-color: #1976d2;
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+app-top-bar h1 {
+  color: white;
+  margin: 0;
+}
+
+/* Checkout Cart, Shipping Prices */
+
+.cart-item, .shipping-item {
+  width: 100%;
+  min-width: 400px;
+  max-width: 450px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 16px 32px;
+  margin-bottom: 8px;
+  border-radius: 2px;
+  background-color: #EEEEEE;
+}
+
+div[table] ul{margin:0;padding:0;list-style:none;display: table-row} 
+div[table] li{display: table-cell;padding: 4px;line-height: 2em;}
+div[table] li[caption]{text-align: right ;font-weight: bolder; margin-left: 10px;}
+
+
+[hidden]{
+  display: none;
+}
+
+/*
+Copyright Google LLC. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at http://angular.io/license
+*/
+app-apply-top{
+  width:800px;
+}
+
+[apply] table {
+  display: table;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  width: 800px;
+}
+
+[apply] td {
+  height: 50px;
+  border: 1px solid #ccc;
+  text-align: center;
+  
+}
+
+[apply] td input[type=text] {
+  width: 100%;
+  height: 50px;
+  outline: none;
+  padding: 8px;
+}
+
+
+input.ng-valid{
+  border: none;
+}input.ng-invalid{
+  border: none;
+  background-color: #FFEEEE;
+  
+}
+
+[apply] td:first-child,td:nth-child(3){
+  width: 20%;
+  font-weight: bold;
+  text-align: center;
+}
+
+[apply] td:nth-child(4){
+  width: 30%;
+}
+
+[apply] table+div{
+  width: 800px;
+  text-align: center;
+  padding: 10px;
+}
+
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-balham.css";

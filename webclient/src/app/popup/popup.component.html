@@ -1,0 +1,8 @@
+<div class="popup">
+    <div>
+        <div class="title-bar">
+            <a class="close" [routerLink]="closeRouterLink" (click)="close.emit()"></a>
+        </div>
+        <ng-content></ng-content>
+    </div>
+</div>

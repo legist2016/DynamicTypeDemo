@@ -1,0 +1,9 @@
+<div class="outer">
+    <div class="left-side">
+        <app-manager-menu (menu)="content=$event" [actived]='content'></app-manager-menu>
+    </div>
+    <div class="right-side">
+        <app-products *ngIf="content=='products'" ></app-products>
+    </div>
+</div>
+<app-window-confirm></app-window-confirm>

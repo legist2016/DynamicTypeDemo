@@ -1,0 +1,26 @@
+<div class="container">
+    <table>
+        <tr>
+            <td>名称</td>
+            <td><input id="name" type="text" autocomplete="off" [(ngModel)]="product.name"></td>
+        </tr>
+        <tr>
+            <td>价格</td>
+            <td><input id="price" type="number" autocomplete="off" [(ngModel)]="product.price"></td>
+        </tr>
+        <tr>
+            <td>描述</td>
+            <td><input id="description" type="text" autocomplete="off" [(ngModel)]="product.description"></td>
+        </tr>
+        <tr>
+            <td>状态</td>
+            <td><select id="state" type="text" autocomplete="off" [(ngModel)]="product.state">
+                <option value=1>停用</option>
+                <option value=2>启用</option>
+            </select></td>
+        </tr>
+    </table>
+    <div>
+        <button (click)="do(product)">保存</button><button (click)="do(null)">取消</button>
+    </div>
+</div>

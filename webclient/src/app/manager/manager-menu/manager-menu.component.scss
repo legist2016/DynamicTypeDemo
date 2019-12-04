@@ -1,0 +1,78 @@
+div{
+    height: 35px;
+    overflow: hidden;
+    background-color: #cecece;
+    padding: 0 10px;
+    &.down{
+        li{
+            &::after{
+                content: "";
+                display: block;
+                width: 1px;
+                height: 20px;
+                margin-top: 8px;             
+                float: left;
+                background-color: #808080;
+        
+            }
+            &:last-of-type{
+                width: 1px;
+            }
+            &.actived, &:hover{
+                &::after{
+                background-color: rgba(0, 0, 0, 0.0);
+                }
+            }     
+        }
+    }
+    &.up{
+        margin-top: -35px;
+        li{
+            visibility: hidden;
+            &.actived{
+                visibility:visible;
+                background-color: #f7f7f7;
+                box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+            }
+        }
+    }
+    li{
+        display: block;
+        cursor: default;
+        //height: 30px;
+        text-align: center;
+        width: 200px;
+        line-height: 35px;
+        //padding: 5px;
+        //margin: 0px 5px;
+        color: black;
+        float: left;    
+        border-radius: 6px 6px 0 0;
+        //background-color: rgba(255, 255, 255, 0);
+        &:hover{
+            background-color: #d9d9d9;
+        }
+
+        /*&:not(.actived):not(:last-of-type):hover{
+            background-color: rgba(217, 217, 217, 1);
+        }
+        &.actived{
+            background-color: rgba(247, 247, 247, 1);
+            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        &+div{
+            clear: both;
+        }
+        &:not(.actived)+li:not(.actived)::after{
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        &:not(.actived)+li:hover:not(.actived):not(:last-of-type)::after{
+            background-color: rgba(255, 255, 255, 0);
+        }
+        &:hover:not(.actived):not(:last-of-type)+li:not(.actived)::after{
+            background-color: rgba(255, 255, 255, 0);
+        }*/
+    }
+
+}

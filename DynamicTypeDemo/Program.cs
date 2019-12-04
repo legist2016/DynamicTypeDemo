@@ -63,11 +63,16 @@ namespace DynamicTypeDemo
             var type = template.CreateType("T_100", "T_100");
             using (var db = new Model1(new List<Type>() { type }))
             {
-                /*var tran = db.Database.BeginTransaction();
+                /*//var tran = db.Database.BeginTransaction();
                 db.Database.ExecuteSqlCommand(sql);
                 var list = db.getdata(type,"sys_id", 1);
                 tran.Rollback();*/
+                //db.Database.Connection.
+                //var ss = System.Data.Entity.Core.Common.DbProviderServices.
+                var list = db.getdata(type, "sys_id", 1);
+
             }
+            
             var sqla = template.SQLGenerateAlterTable("dddddddd");
         }
     }

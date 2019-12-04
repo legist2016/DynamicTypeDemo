@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Linq;
 using System.Data.Entity.Infrastructure.Annotations;
+using System.Data.Entity.Migrations.Builders;
 
 namespace DynamicTypeDemo.Template
 {
@@ -101,23 +102,27 @@ namespace DynamicTypeDemo.Template
         public static string SQLGenerateAlterTable(this TableTemplate template, string tableName)
         {
             SqlServerMigrationSqlGenerator gen = new SqlServerMigrationSqlGenerator();
+            ColumnBuilder columnBuilder = new ColumnBuilder();
+            //columnBuilder.Int(name:"sysid",identity:true);
+
+            //System.Data.Entity.Migrations.DbMigration
             var operations = new List<MigrationOperation>();
             var dict = new Dictionary<string, AnnotationValues>();
             dict.Add("dddddd", new AnnotationValues(1, 2));
             var alter = new AlterTableOperation("dddd", dict);
-            
-            
-            //alter.Columns.Add(new ColumnModel(PrimitiveTypeKind.String) { Name="dd" });
-            
-            
-            //operations.Add(alter);
-            operations.Add(new AddColumnOperation("dddd", new ColumnModel(PrimitiveTypeKind.String) { Name = "dd" }));
-            operations.Add(new AlterColumnOperation("dddd", new ColumnModel(PrimitiveTypeKind.String) { Name = "dd3",MaxLength=20 },false));
-            operations.Add(new AlterColumnOperation("dddd", new ColumnModel(PrimitiveTypeKind.String) { Name = "dd2",MaxLength=50 },false));
-            operations.Add(new RenameColumnOperation("dddd","dd3","ee3"));
 
-            var sqls = gen.Generate(operations, "2008").Select<MigrationStatement, string>(ms=>ms.Sql).ToArray();
-            var sql = string.Join("\r\n\r\n",sqls);
+
+            //alter.Columns.Add(new ColumnModel(PrimitiveTypeKind.String) { Name="dd" });
+
+
+            //operations.Add(alter);
+            operations.Add(new AddColumnOperation(tableName, columnBuilder.String(name:"dd")));
+            operations.Add(new AlterColumnOperation(tableName, new ColumnModel(PrimitiveTypeKind.String) { Name = "dd3", MaxLength = 20 }, false));
+            operations.Add(new AlterColumnOperation(tableName, new ColumnModel(PrimitiveTypeKind.String) { Name = "dd2", MaxLength = 50 }, false));
+            operations.Add(new RenameColumnOperation(tableName, "dd3", "ee3"));
+
+            var sqls = gen.Generate(operations, "2008").Select<MigrationStatement, string>(ms => ms.Sql).ToArray();
+            var sql = string.Join("\r\n\r\n", sqls);
             return sql;
         }
 
