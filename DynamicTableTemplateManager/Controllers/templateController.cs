@@ -34,6 +34,8 @@ namespace DynamicTableTemplateManager.Controllers
             return Ok(tableTemplate);
         }
 
+
+
         // PUT: api/template/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTableTemplate(int id, TableTemplate tableTemplate)
@@ -102,6 +104,30 @@ namespace DynamicTableTemplateManager.Controllers
 
             return Ok(tableTemplate);
         }
+
+        // GET: api/template/fields/5
+        //[ResponseType(typeof(TableTemplate))]
+        [ActionName("fields")]
+        public IHttpActionResult GetTableTemplateFields(int id)
+        {
+            TableTemplate tableTemplate = db.TableTemplates.Find(id);
+            if (tableTemplate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tableTemplate.Fields);
+        }
+
+        // PUT: api/template/fields/5
+        //[ResponseType(typeof(TableTemplate))]
+        [ActionName("fields")]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutTableTemplateFields(int id, List<TableTemplateField[]> fields)
+        {
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
 
         protected override void Dispose(bool disposing)
         {

@@ -67,8 +67,11 @@ export class DataService {
   data = {}
 
   @Querying() @CatchErr()
-  loadData(type) {
+  loadData(type, params?) {
     let url = environment.config.apiUrl[type]
+    if(params){
+      url = url + '/' + params
+    }
     return this.http.get(url)
       .toPromise<any>()
       .then(data => {

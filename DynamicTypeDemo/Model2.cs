@@ -14,7 +14,7 @@ namespace DynamicTypeDemo
             Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
         }
 
-        public virtual DbSet<T_CM_PRODUCT> T_CM_PRODUCT { get; set; }
+        //public virtual DbSet<T_CM_PRODUCT> T_CM_PRODUCT { get; set; }
         public virtual DbSet<TableTemplate> TableTemplates { get; set; }
         public virtual DbSet<TableTemplateField> TableTemplateFields { get; set; }
 

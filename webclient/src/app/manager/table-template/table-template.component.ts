@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ManagerBase } from 'src/app/wizard';
 
 @Component({
@@ -6,11 +6,20 @@ import { ManagerBase } from 'src/app/wizard';
   templateUrl: './table-template.component.html',
   styleUrls: ['./table-template.component.scss']
 })
-export class TableTemplateComponent extends ManagerBase implements OnInit {
+export class TableTemplateComponent extends ManagerBase {
 
   constructor() {
     super()
     this.context['buttons'] = [{ key: 'design', name: '设计' }, { key: 'edit', name: '编辑' }, { key: 'delete', name: '删除' }];
+  }
+
+  ngOnInit() {
+    if (this.typename) {
+      this.ds.data[this.typename + '_list'] = null
+      this.ds.data[this.typename] = null
+      this.ds.loadData(this.typename);
+    }
+
   }
 
   typename = 'TableTemplate'
@@ -21,11 +30,6 @@ export class TableTemplateComponent extends ManagerBase implements OnInit {
     if (key == "design") this.onEdit(node);
   }
 
-  ngOnInit() {
-    this.ds.data[this.typename+'_list'] = null
-    this.ds.data[this.typename] = null
-    this.ds.loadData(this.typename);
-  }
   columnDefs = [
     { headerName: 'ID', field: 'Id', checkboxSelection: true, width: 80 },
     { headerName: "操作", field: '', cellRenderer: "childMessageRenderer" },
@@ -33,7 +37,7 @@ export class TableTemplateComponent extends ManagerBase implements OnInit {
   ]
 
   saveNewData(data) {
-    super.saveNewData(data, (after)=>{
+    super.saveNewData(data, (after) => {
       this.ds.postData("TableTemplate", data, (data) => {
         after(data)
       })
@@ -50,7 +54,7 @@ export class TableTemplateComponent extends ManagerBase implements OnInit {
     });
   }
   onDelete(node?) {
-    super.onDelete(node,(data, after)=>{
+    super.onDelete(node, (data, after) => {
       this.ds.deleteData("TableTemplate", data.Id, () => {
         after()
       })

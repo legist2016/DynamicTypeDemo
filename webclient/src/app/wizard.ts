@@ -1,4 +1,4 @@
-import { EventEmitter, Output, Input } from "@angular/core"
+import { EventEmitter, Output, Input, OnInit } from "@angular/core"
 import { DataService } from "src/app/data.service";
 import { localeText } from 'src/app/aggrid.localtext';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
@@ -26,7 +26,7 @@ export class BaseEdit {
 }
 
 
-export class ManagerBase {
+export class ManagerBase implements OnInit {
     //数据服务对象
     @Input() ds: DataService
 
@@ -37,14 +37,18 @@ export class ManagerBase {
     editList = []
     deleteList = []
     resolve
+    typename
     constructor() { }
+
+    ngOnInit() {
+    }
 
     //for ag-grid  start
     gridApi
     modules = AllCommunityModules;
     context = { componentParent: this }
     localeText = localeText
-    columnDefs = [
+    columnDefs:any = [
         { headerName: 'ID', field: 'Id', checkboxSelection: true, width: 80 },
         { headerName: "操作", field: '', cellRenderer: "childMessageRenderer" },
         { headerName: '名称', field: 'Name' },

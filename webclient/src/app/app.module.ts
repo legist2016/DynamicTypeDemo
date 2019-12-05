@@ -33,6 +33,7 @@ import { WindowConfirmComponent } from './window-confirm/window-confirm.componen
 import { TableTemplateComponent } from './manager/table-template/table-template.component';
 import { TableTemplateEditComponent } from './manager/table-template/table-template-edit/table-template-edit.component';
 import { AgButtonsCellRanderComponent } from './ag-buttons-cell-rander/ag-buttons-cell-rander.component';
+import { TableTemplateFieldComponent } from './manager/table-template-field/table-template-field.component';
 
 @NgModule({
   imports: [
@@ -55,7 +56,7 @@ import { AgButtonsCellRanderComponent } from './ag-buttons-cell-rander/ag-button
     ProductsComponent,
     ProductEditComponent,
     ManagerMenuComponent,
-    PopupComponent, WindowConfirmComponent, TableTemplateComponent, TableTemplateEditComponent, AgButtonsCellRanderComponent, 
+    PopupComponent, WindowConfirmComponent, TableTemplateComponent, TableTemplateEditComponent, AgButtonsCellRanderComponent, TableTemplateFieldComponent, 
   ],
   bootstrap: [AppComponent],
   providers: [
