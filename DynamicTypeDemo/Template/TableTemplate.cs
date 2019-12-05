@@ -16,12 +16,6 @@ namespace DynamicTypeDemo.Template
         public TableTemplate()
         {
             Fields = new HashSet<TableTemplateField>();
-            /*Fields.Add(new TableTemplateField() {
-                Name="sys_id",
-                Type = TableTemplateFieldType.Int,
-                Title = "ID",
-                IsKey = true
-            });*/
         }
         [Key]
         //[DataMember]
