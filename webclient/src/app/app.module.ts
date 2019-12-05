@@ -8,9 +8,8 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { APP_BASE_HREF } from '@angular/common';
 
 import { AppComponent } from "./app.component";
-import { HelloComponent } from "./hello.component";
 
-import { ApplyDataService } from './data.service';
+import { DataService } from './data.service';
 
 import { HttpClientModule } from "@angular/common/http";
 import { HomeComponent } from './home/home.component';
@@ -21,7 +20,7 @@ import { ConverComponent } from './conver/conver.component';
 import { ManagerComponent } from './manager/manager.component';
 
 
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridModule } from '@ag-grid-community/angular';
 import { ProductsComponent } from './manager/products/products.component';
 import { ProductEditComponent } from './manager/products/product-edit/product-edit.component';
 import { ManagerMenuComponent } from './manager/manager-menu/manager-menu.component';
@@ -31,6 +30,9 @@ import { PopupComponent } from './popup/popup.component';
 import { environment } from '../environments/environment';
 import {PathLocationStrategy, LocationStrategy,HashLocationStrategy } from '@angular/common';
 import { WindowConfirmComponent } from './window-confirm/window-confirm.component';
+import { TableTemplateComponent } from './manager/table-template/table-template.component';
+import { TableTemplateEditComponent } from './manager/table-template/table-template-edit/table-template-edit.component';
+import { AgButtonsCellRanderComponent } from './ag-buttons-cell-rander/ag-buttons-cell-rander.component';
 
 @NgModule({
   imports: [
@@ -43,22 +45,21 @@ import { WindowConfirmComponent } from './window-confirm/window-confirm.componen
       { path: "manager", component: ManagerComponent },
 
     ]),
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([AgButtonsCellRanderComponent])
   ],
   declarations: [
     AppComponent,
-    HelloComponent,
     HomeComponent,
     ConverComponent,
     ManagerComponent,
     ProductsComponent,
     ProductEditComponent,
     ManagerMenuComponent,
-    PopupComponent, WindowConfirmComponent
+    PopupComponent, WindowConfirmComponent, TableTemplateComponent, TableTemplateEditComponent, AgButtonsCellRanderComponent, 
   ],
   bootstrap: [AppComponent],
   providers: [
-    ApplyDataService,
+    DataService,
     {
       provide: APP_BASE_HREF,
       //useValue: '/'

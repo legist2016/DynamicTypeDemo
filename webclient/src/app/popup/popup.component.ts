@@ -1,4 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-popup',
@@ -7,6 +8,7 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 })
 export class PopupComponent implements OnInit {
   @Input() closeRouterLink
+  @Input() Title
   @Output() close = new EventEmitter()
 
   constructor() { }

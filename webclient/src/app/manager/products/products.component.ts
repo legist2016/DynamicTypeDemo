@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { ApplyDataService } from 'src/app/data.service';
+import { DataService } from 'src/app/data.service';
 import { Product } from 'src/app/order';
 import { localeText } from 'src/app/aggrid.localtext';
 
-@Component({
+@Component({ 
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.scss']
 })
 export class ProductsComponent implements OnInit {
 
-  constructor(public ds: ApplyDataService) { }
+  constructor(public ds: DataService) { }
 
   columnDefs = [
     { headerName: 'ID', field: 'id', checkboxSelection: true, width: 80 },

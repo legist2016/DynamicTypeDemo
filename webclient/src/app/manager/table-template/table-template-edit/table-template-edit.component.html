@@ -1,0 +1,11 @@
+<div class="container">
+    <table>
+        <tr>
+            <td>名称</td>
+            <td><input id="name" type="text" autocomplete="off" [(ngModel)]="data.Name"></td>
+        </tr>
+    </table>
+    <div>
+        <button (click)="do.emit(data)">保存</button><button (click)="do.emit(null)">取消</button>
+    </div>
+</div>

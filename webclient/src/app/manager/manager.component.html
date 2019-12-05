@@ -3,24 +3,8 @@
         <app-manager-menu (menu)="content=$event" [actived]='content'></app-manager-menu>
     </div>
     <div class="right-side">
-        <app-products *ngIf="content=='products'"></app-products>
+        <app-table-template *ngIf="content=='products'" [ds]="ds"></app-table-template>
     </div>
 </div>
 <app-window-confirm></app-window-confirm>
 
-
-
-<div style="position: absolute;top:200px;left: 100px;width: 500px;height: 500px;background-color: #f7f7f7;">
-    <div style="display: inline-block;width: 200px;height: 50px;
-    overflow: hidden;
-    
-    ">
-        <div style="width: 200px;height: 50px;background-color: #f7f7f7;"></div>
-    </div>
-    <div style="display: inline-block;width: 200px;height: 50px;
-    border-radius: 0 0 5px 5px;overflow: hidden;
-    
-    ">
-        <div style="width: 200px;height: 50px;background-color: #d7d7d7;"></div>
-    </div>
-</div>

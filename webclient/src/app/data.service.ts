@@ -53,32 +53,48 @@ export function Querying() {
 
 
 /**数据服务*/
+@Injectable({
+  providedIn: "root"
+})
 export class DataService {
   constructor(public http: HttpClient) {
-    /*console.log(environment)
-    if (window.alert !== this.alert) {
-      //console.log('hack window alert')
-      window['_alert'] = window.alert
-      window.alert['message'] = "ddddddddddddddd"
-      window['ds'] = this
-      //alert = this.alert
-      window.alert = this.alert
-    }*/
   }
 
   init() {
     this.querying = false;
-    //this.message = null;
-    this.order = null;
-    this.items = null;
-    this.flows = null
   }
 
-  /*alert = function (msg) {
-    let ds = window['ds']
-    //console.log(ds)
-    ds.message = (ds.message && `${ds.message}\n${msg}`) || msg
-  }*/
+  data = {}
+
+  @Querying() @CatchErr()
+  loadData(type) {
+    let url = environment.config.apiUrl[type]
+    return this.http.get(url)
+      .toPromise<any>()
+      .then(data => {
+        this.data[type + "_list"] = data;
+      })
+  }
+
+  @Querying() @CatchErr()
+  postData(type, data, after?) {
+    let url = environment.config.apiUrl[type]
+    return this.http.post(url, data).toPromise()
+      //.then(data => {this.data[type] = data;})
+  }
+
+  @Querying() @CatchErr()
+  putData(type, id, data, after?) {
+    let url = environment.config.apiUrl[type]
+    return this.http.put(url + '/' + id, data).toPromise()
+      //.then(() => {this.data[type] = data;})
+  }
+
+  @Querying() @CatchErr()
+  deleteData(type, id, after?) {
+    let url = environment.config.apiUrl[type]
+    return this.http.delete(url + '/' + id).toPromise()
+  }
 
   //message
   /**产品数组*/
@@ -174,7 +190,7 @@ export class DataService {
   /**载入产品列表
    * @param state 产品状态筛选
    */
-  @Querying() @CatchErr({'404':'载入数据时发生错误！'})
+  @Querying() @CatchErr({ '404': '载入数据时发生错误！' })
   LoadProductList(state?: number, after?) {
     //if (!this.products) {    
     let url = environment.config.apiProductUrl
@@ -227,7 +243,7 @@ export class DataService {
    * 载入订单列表
    * @param state 
    */
-  @Querying() @CatchErr({'404':'载入数据时发生错误！'})
+  @Querying() @CatchErr({ '404': '载入数据时发生错误！' })
   loadOrderList(states?: string, after?) {
     //if (this.orders == null) {
     let url = environment.config.apiOrderUrl
@@ -281,60 +297,6 @@ export class DataService {
     this.http.get('').toPromise()
 
   }
-}
-
-
-
-@Injectable({
-  providedIn: "root"
-})
-export class ApplyDataService extends DataService {
-  model: {
-    student: Order;
-    query: Student;
-    step: number
-  };
-
-
-  constructor(public http: HttpClient) {
-    super(http)
-
-  }
-
-  init() {
-    super.init();
-    this.model = {
-      student: null,
-      query: new Student(),
-      step: 1
-
-    };
-  }
-
-  @Querying()
-  @CatchErr({ "404": "没有找到可用的学生信息，请直接填写信息", "123": "学号姓名不匹配，请填入正确的姓名，或直接填写信息。" })
-  queryStudent(after?) {
-
-    var xh = this.model.query.xh;
-    var xm = this.model.query.xm;
-    this.model.student = null;
-    return this.getStudentInfo(xh, xm)
-      .then(data => {
-        data = {
-          xh: data.XH,
-          xm: data.XM,
-          xb: data.XB,
-          csrq: data.CSRQ,
-          yx: data.YX, zy: data.ZY, rxsj: data.RXRQ, bysj: data.BYRQ
-        };
-        if (xm && xm != data.xm) {
-          throw { status: 123 };
-        }
-        this.model.student = data
-        return;
-      })
-  }
-
 }
 
 function praseArray<T>(type: (new (...args) => T), array, callback?: any) {

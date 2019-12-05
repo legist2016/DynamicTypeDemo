@@ -1,0 +1,15 @@
+<div>
+    <button (click)="onNew()">添加</button>
+    <button (click)="ngOnInit()">刷新</button>
+</div>
+<ag-grid-angular style="height: 500px;" class="ag-theme-balham" [localeText]='localeText' 
+[rowData]="ds.data['TableTemplate_list']" [columnDefs]="columnDefs" (rowDoubleClicked)="onRowDbclick($event)" 
+[frameworkComponents]="frameworkComponents" [modules]="modules" [context]="context"
+(gridReady)="gridReady($event)"></ag-grid-angular>
+<app-popup *ngIf="newData" Title="新建模板" (close)="saveNewData(null)">
+    <app-table-template-edit [data]="newData" (do)="saveNewData($event)"></app-table-template-edit>
+</app-popup>
+
+<app-popup *ngIf="editData" Title="编辑模板" (close)="onEditSave(null)">
+    <app-table-template-edit [data]="editData" (do)="onEditSave($event)"></app-table-template-edit>
+</app-popup>

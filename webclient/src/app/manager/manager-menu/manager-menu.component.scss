@@ -21,15 +21,19 @@
 
 div {
     height: 35px;
+    //width: 100%;
     overflow: hidden;
-    background-color: #cecece;
+    
     padding: 0 10px;
     &.down {
+        //position: absolute;
+        background-color: #cecece;
         li {
+            
             &:hover {
                 background-color: #d9d9d9;
                 animation: myfirst 0.4s;
-                -webkit-animation: myfirst 0.4s;
+                //-webkit-animation: myfirst 0.4s;
             }
             &::after {
                 content: "";
@@ -52,6 +56,7 @@ div {
     }
     &.up {
         margin-top: -35px;
+        //position: relative;
         li {
             visibility: hidden;
             &.actived {
@@ -71,7 +76,7 @@ div {
         cursor: default;
         //height: 30px;
         text-align: center;
-        width: 200px;
+        width: 150px;
         line-height: 35px;
         //padding: 5px;
         //margin: 0px 5px;

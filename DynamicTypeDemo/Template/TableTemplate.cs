@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 namespace DynamicTypeDemo.Template
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-    [DataContract]
+    //[DataContract]
     public class TableTemplate
     {
         public TableTemplate()
         {
-            Fields = new List<TableTemplateField>();
+            Fields = new HashSet<TableTemplateField>();
             /*Fields.Add(new TableTemplateField() {
                 Name="sys_id",
                 Type = TableTemplateFieldType.Int,
@@ -23,13 +24,17 @@ namespace DynamicTypeDemo.Template
             });*/
         }
         [Key]
-        [DataMember]
+        //[DataMember]
         public int Id { get; set; }
-        [DataMember]
+        //[DataMember]
         public string Name { get; set; }
 
+        
+        public bool IsDelete { get; set; }
+
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [DataMember]
-        public virtual List<TableTemplateField> Fields { get; set; }
+        //[DataMember]
+        [JsonIgnore]
+        public virtual ICollection<TableTemplateField> Fields { get; set; }
     }
 }

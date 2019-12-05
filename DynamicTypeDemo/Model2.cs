@@ -11,6 +11,7 @@ namespace DynamicTypeDemo
         public Model2()
             : base("name=Model1")
         {
+            Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
         }
 
         public virtual DbSet<T_CM_PRODUCT> T_CM_PRODUCT { get; set; }
@@ -22,6 +23,7 @@ namespace DynamicTypeDemo
             modelBuilder.Entity<TableTemplate>().HasMany(t => t.Fields)
                 .WithOptional()                
                 .HasForeignKey(t=>t.TableTemplateId);
+
 
 
         }

@@ -2,6 +2,9 @@ export const environment = {
   production: true,
   publicBase: "/",
   config: {
+    apiUrl: {
+      TableTemplate: "http://localhost:4062/api/template",
+    },
     apiProductUrl: "http://192.168.202.213/cm/api/product",
     apiOrderUrl: "http://192.168.202.213/cm/api/order",
     apiStudentUrl: "http://192.168.202.213/cm/api/student",

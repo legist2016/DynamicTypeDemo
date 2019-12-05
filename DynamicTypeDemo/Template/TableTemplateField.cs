@@ -14,30 +14,30 @@ namespace DynamicTypeDemo.Template
         Int=1,
         String
     }
-    [DataContract]
+    //[DataContract]
     public class TableTemplateField
     {
         public TableTemplateField()
         {
         }
         [Key]
-        [DataMember]
+        //[DataMember]
         public int Id { get; set; }
-        [DataMember]
+        //[DataMember]
         public int TableTemplateId { get; set; }
-        [DataMember]
+        //[DataMember]
         public string Name { get; set; }
-        [DataMember]
+        //[DataMember]
         public string Title { get; set; }
-        [DataMember]
+        //[DataMember]
         public TableTemplateFieldType Type { get; set; }
-        [DataMember]
+        //[DataMember]
         public bool IsKey { get; set; }
-        [DataMember]
+        //[DataMember]
         public bool IsRequire { get; set; }
-        [DataMember]
+        //[DataMember]
         public int Length { get; set; }
-        [DataMember]
+        //[DataMember]
         public bool IsSysField { get; set; }
         /*public int DisplayLength { get; set; }
         public int IsMultiline { get; set; }*/

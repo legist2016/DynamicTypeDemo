@@ -11,6 +11,9 @@
   },
   "private": true,
   "dependencies": {
+    "@ag-grid-community/all-modules": "^22.0.0",
+    "@ag-grid-community/angular": "^22.0.0",
+    "@ag-grid-community/core": "^22.0.0",
     "@angular-devkit/build-angular": "^0.803.16",
     "@angular/common": "8.0.0",
     "@angular/compiler": "^8.2.13",

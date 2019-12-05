@@ -1,0 +1,3 @@
+<div *ngIf="params.context.buttons">
+<a (click)="invokeParentMethod()" *ngFor="let button of params.context.buttons" (click)="invokeParentMethod(button.key)">{{button.name}}</a>
+</div>

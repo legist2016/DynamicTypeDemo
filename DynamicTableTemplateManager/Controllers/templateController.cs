@@ -17,14 +17,8 @@ namespace DynamicTableTemplateManager.Controllers
         // GET: api/template
         public IHttpActionResult GetTableTemplate()
         {
-            var list =  db.TableTemplates;
+            var list =  db.TableTemplates.Where(p=>p.IsDelete == false);
             return Ok(list);
-            /*list.ForEach(t=> {
-                var fs = t.Fields.ToList();
-            });
-
-            var list1 = new TableTemplate[] { new TableTemplate() };*/
-            //return Ok(new { name="ddddddd",values=new List<TableTemplateField>() { new TableTemplateField() } });
         }
 
         // GET: api/template/5
@@ -54,7 +48,9 @@ namespace DynamicTableTemplateManager.Controllers
                 return BadRequest();
             }
 
+
             db.Entry(tableTemplate).State = EntityState.Modified;
+            db.Entry(tableTemplate).Property("IsDelete").IsModified = false;
 
             try
             {
@@ -100,7 +96,8 @@ namespace DynamicTableTemplateManager.Controllers
                 return NotFound();
             }
 
-            db.TableTemplates.Remove(tableTemplate);
+            //db.TableTemplates.Remove(tableTemplate);
+            tableTemplate.IsDelete = true;
             db.SaveChanges();
 
             return Ok(tableTemplate);
