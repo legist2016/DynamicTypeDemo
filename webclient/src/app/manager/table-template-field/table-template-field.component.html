@@ -1,4 +1,4 @@
 <div style="height: 100%;width: 100%;">
     <ag-grid-angular style="height: 100%;width: 100%;" class="ag-theme-balham" [localeText]='localeText' [rowData]="ds.data[typename+'_list']" [columnDefs]="columnDefs" (rowDoubleClicked)="onRowDbclick($event)" [frameworkComponents]="frameworkComponents"
-        [modules]="modules" [context]="context" (gridReady)="gridReady($event)"></ag-grid-angular>
+        [modules]="modules" [context]="context" (gridReady)="gridReady($event)" [defaultColDef]='defaultColDef'></ag-grid-angular>
 </div>
