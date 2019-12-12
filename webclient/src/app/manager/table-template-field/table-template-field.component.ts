@@ -17,7 +17,7 @@ export class TableTemplateFieldComponent extends ManagerBase {
   ngOnInit() {
     console.log(this.ds)
     if (this.typename) {
-      this.ds.data[this.typename + '_list'] = [{}]
+      this.ds.data[this.typename + '_list'] = [{},{}]
       this.ds.data[this.typename] = null
       //this.ds.loadData(this.typename,"1");
     }
@@ -27,12 +27,23 @@ export class TableTemplateFieldComponent extends ManagerBase {
     resizable: true
   }
   columnDefs = [
-    { headerName: "操作", field: '', cellRenderer: "childMessageRenderer",width:60 },
+    { headerName: "操作", field: '', cellRenderer: "childMessageRenderer",width:60 ,editable:false},
     { headerName: '名称', field: 'Name' ,width:120 },
     { headerName: '标题', field: 'Title' ,width:120 },
-    { headerName: '类型', field: 'Type' ,width:120 },
+    { headerName: '类型', field: 'Type' ,width:120 , cellEditor:'agSelectCellEditor', cellEditorParams:{values:['1','2']} , 
+    valueFormatter:(params)=>{return ['','整型','字符型'][params.value]}},
     { headerName: '长度', field: 'Length' ,width:120 },
   ]
  
+  rowValueChanged(event){
+    console.log('rowValueChanged', event)
+  }
 
+  methodFromParent(event,node){
+    console.log('methodFromParent', event,node)
+  }
+
+  rowEditingStopped(event){
+    console.log('rowEditingStopped', event)
+  }
 }
