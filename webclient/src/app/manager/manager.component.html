@@ -1,8 +1,8 @@
-<div class="outer">
+<div class="outer up-down-split">
     <div class="left-side">
         <app-manager-menu (menu)="content=$event" [actived]='content'></app-manager-menu>
     </div>
-    <div class="right-side">
+    <div class="right-side flex">
         <app-table-template *ngIf="content=='products'" [ds]="ds"></app-table-template>
     </div>
 </div>

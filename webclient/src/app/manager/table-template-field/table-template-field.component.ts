@@ -8,7 +8,8 @@ import { ManagerBase } from 'src/app/wizard';
 })
 export class TableTemplateFieldComponent extends ManagerBase {
 
-  constructor() { super() 
+  constructor() {
+    super()
     this.context['buttons'] = [{ key: 'delete', name: '删除' }];
   }
 
@@ -17,7 +18,7 @@ export class TableTemplateFieldComponent extends ManagerBase {
   ngOnInit() {
     console.log(this.ds)
     if (this.typename) {
-      this.ds.data[this.typename + '_list'] = [{},{}]
+      this.ds.data[this.typename + '_list'] = [{}, {}]
       this.ds.data[this.typename] = null
       //this.ds.loadData(this.typename,"1");
     }
@@ -27,23 +28,86 @@ export class TableTemplateFieldComponent extends ManagerBase {
     resizable: true
   }
   columnDefs = [
-    { headerName: "操作", field: '', cellRenderer: "childMessageRenderer",width:60 ,editable:false},
-    { headerName: '名称', field: 'Name' ,width:120 },
-    { headerName: '标题', field: 'Title' ,width:120 },
-    { headerName: '类型', field: 'Type' ,width:120 , cellEditor:'agSelectCellEditor', cellEditorParams:{values:['1','2']} , 
-    valueFormatter:(params)=>{return ['','整型','字符型'][params.value]}},
-    { headerName: '长度', field: 'Length' ,width:120 },
+    { headerName: "操作", field: '', cellRenderer: "childMessageRenderer", width: 60, editable: false },
+    { headerName: '名称', field: 'Name', width: 120 },
+    { headerName: '标题', field: 'Title', width: 120 },
+    {
+      headerName: '类型', field: 'Type', width: 120, cellEditor: 'agSelectCellEditor', cellEditorParams: { values: [1, 2] },
+      valueFormatter: (params) => { return ['', '整型', '字符型'][params.value] }
+    },
+    { headerName: '长度', field: 'Length', width: 120 },
   ]
- 
-  rowValueChanged(event){
+
+  rowValueChanged(event) {
     console.log('rowValueChanged', event)
+    if (event.data._rowDataObjectStates == 'new') {
+      event.data._rowDataObjectStates = 'add'
+    } else if (event.data._rowDataObjectStates == 'add') {
+
+    } else {
+      event.data._rowDataObjectStates = 'modify'
+    }
   }
 
-  methodFromParent(event,node){
-    console.log('methodFromParent', event,node)
+  methodFromParent(key, node) {
+    console.log('methodFromParent', event, node)
+    if (key == "delete") {
+      this.gridApi.stopEditing();
+      this.onDelete(node);
+    }
   }
 
-  rowEditingStopped(event){
-    console.log('rowEditingStopped', event)
+  rowEditingStopped(event) {
+    //console.log('rowEditingStopped', event)
+    if (event.data._rowDataObjectStates == 'new') {
+      this.onDeleteAfter(event.data)
+    }
+  }
+  rowDataChanged(event) {
+    //console.log(event)
+  }
+  rowDataUpdated(event) {
+    //console.log(event)
+  }
+
+  onNew() {
+    //console.log(this.gridApi.getModel()	)
+    let row = {
+      Name: "NEW_FIELD_" + (this.gridApi.getDisplayedRowCount() + 1),
+      Title: "新字段" + (this.gridApi.getDisplayedRowCount() + 1),
+      Type: 2,
+      Length: 20,
+      _rowDataObjectStates: 'new'
+    }
+    this.saveNewData(row)
+    this.gridApi.forEachNode((node, index) => {
+      if (node.data == row) {
+        this.gridApi.setFocusedCell(index, "Name")
+        this.gridApi.startEditingCell({
+          rowIndex: index,
+          colKey: "Name"
+        });
+      }
+    })
+  }
+  onSave() {
+    let del = []
+    let add = []
+    let mod = []
+    this.deleteList.forEach((data) => {
+      if (data._rowDataObjectStates != 'add') {
+        //console.log(data)
+        del.push(data)
+      }
+    })
+    this.gridApi.forEachNode((node, index) => {
+      let data = node.data
+      if (data._rowDataObjectStates == 'add') {
+        add.push(data)
+      } else if (data._rowDataObjectStates == 'modify') {
+        mod.push(data)
+      }
+    })
+    console.log([add,mod,del])
   }
 }

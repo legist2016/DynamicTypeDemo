@@ -1,4 +1,4 @@
-<app-popup *ngIf="messages.length>0" (close)="close()">
+<app-popup *ngIf="messages.length>0" (close)="close()" class="not-relative">
     <div class="alert">
         <pre>{{message()}}</pre>
         <button *ngFor="let button of buttons " (click)="onClick(button)">{{button}}</button>
