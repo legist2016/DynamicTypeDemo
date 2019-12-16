@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { ManagerBase } from 'src/app/wizard';
 
 @Component({
@@ -7,20 +7,23 @@ import { ManagerBase } from 'src/app/wizard';
   styleUrls: ['./table-template-field.component.scss']
 })
 export class TableTemplateFieldComponent extends ManagerBase {
+  @Input() template
 
   constructor() {
     super()
     this.context['buttons'] = [{ key: 'delete', name: '删除' }];
   }
+  @Output() save = new EventEmitter()
+  @Output() close = new EventEmitter()
 
   typename = "TableTemplateField"
 
   ngOnInit() {
-    console.log(this.ds)
+    //console.log(this.ds)
     if (this.typename) {
-      this.ds.data[this.typename + '_list'] = [{}, {}]
+      this.ds.data[this.typename + '_list'] = null
       this.ds.data[this.typename] = null
-      //this.ds.loadData(this.typename,"1");
+      this.ds.loadData(this.typename,`${this.template.Id}/fields`);
     }
   }
   defaultColDef = {
@@ -39,7 +42,7 @@ export class TableTemplateFieldComponent extends ManagerBase {
   ]
 
   rowValueChanged(event) {
-    console.log('rowValueChanged', event)
+    //console.log('rowValueChanged', event)
     if (event.data._rowDataObjectStates == 'new') {
       event.data._rowDataObjectStates = 'add'
     } else if (event.data._rowDataObjectStates == 'add') {
@@ -50,7 +53,7 @@ export class TableTemplateFieldComponent extends ManagerBase {
   }
 
   methodFromParent(key, node) {
-    console.log('methodFromParent', event, node)
+    //console.log('methodFromParent', event, node)
     if (key == "delete") {
       this.gridApi.stopEditing();
       this.onDelete(node);
@@ -73,8 +76,8 @@ export class TableTemplateFieldComponent extends ManagerBase {
   onNew() {
     //console.log(this.gridApi.getModel()	)
     let row = {
-      Name: "NEW_FIELD_" + (this.gridApi.getDisplayedRowCount() + 1),
-      Title: "新字段" + (this.gridApi.getDisplayedRowCount() + 1),
+      Name: "FIELD_" + (this.gridApi.getDisplayedRowCount() + 1),
+      Title: "字段 " + (this.gridApi.getDisplayedRowCount() + 1),
       Type: 2,
       Length: 20,
       _rowDataObjectStates: 'new'
@@ -108,6 +111,7 @@ export class TableTemplateFieldComponent extends ManagerBase {
         mod.push(data)
       }
     })
-    console.log([add,mod,del])
+    console.log([add, del, mod])
+    this.save.emit([add, del, mod])
   }
 }

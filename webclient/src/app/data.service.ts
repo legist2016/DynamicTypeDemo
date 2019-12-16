@@ -87,11 +87,12 @@ export class DataService {
   }
 
   @Querying() @CatchErr()
-  putData(type, id, data, after?) {
+  putData(type, id,  data, after?) {
     let url = environment.config.apiUrl[type]
     return this.http.put(url + '/' + id, data).toPromise()
       //.then(() => {this.data[type] = data;})
   }
+  
 
   @Querying() @CatchErr()
   deleteData(type, id, after?) {

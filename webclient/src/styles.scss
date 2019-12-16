@@ -230,24 +230,24 @@ a {
 }
 */
 
-div.left-right-split{
+.left-right-split{
     display: flex;
     flex-flow:row;
     width:100%;
     height: 100%;
-    &>div{
+    &>*{
         height: 100%;
         &.flex{
           flex:1;
         }
       }  
 }
-  div.up-down-split{
+  .up-down-split{
     display: flex;
     flex-flow:column;
     width:100%;
     height: 100%;
-    &>div{
+    &>*{
         width: 100%;
       &.flex{
         flex:1;

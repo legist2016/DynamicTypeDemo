@@ -21,7 +21,7 @@ namespace DynamicTypeDemo
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TableTemplate>().HasMany(t => t.Fields)
-                .WithOptional()                
+                .WithRequired()
                 .HasForeignKey(t=>t.TableTemplateId);
 
 

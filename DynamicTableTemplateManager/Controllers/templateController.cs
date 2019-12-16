@@ -1,5 +1,6 @@
 ﻿using DynamicTypeDemo;
 using DynamicTypeDemo.Template;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -108,6 +109,7 @@ namespace DynamicTableTemplateManager.Controllers
         // GET: api/template/fields/5
         //[ResponseType(typeof(TableTemplate))]
         [ActionName("fields")]
+        [HttpGet]
         public IHttpActionResult GetTableTemplateFields(int id)
         {
             TableTemplate tableTemplate = db.TableTemplates.Find(id);
@@ -123,9 +125,59 @@ namespace DynamicTableTemplateManager.Controllers
         //[ResponseType(typeof(TableTemplate))]
         [ActionName("fields")]
         [ResponseType(typeof(void))]
+        [HttpPut]
         public IHttpActionResult PutTableTemplateFields(int id, List<TableTemplateField[]> fields)
         {
-            return StatusCode(HttpStatusCode.NoContent);
+            using (var tran = db.Database.BeginTransaction())
+            {
+                try {
+                    if (fields[2] != null)
+                    {
+                        fields[2].ToList().ForEach(p =>
+                        {
+                           
+                            if (db.TableTemplateFields.Count(q => p.Id == q.Id && p.TableTemplateId == q.TableTemplateId)!=1)
+                            {
+                                throw new Exception("无效数据");
+                            }
+
+                            db.Entry(p).State = EntityState.Modified;
+                        });
+                    }
+                    db.SaveChanges();
+                    TableTemplate tableTemplate = db.TableTemplates.Find(id);
+                    if (tableTemplate == null)
+                    {
+                        throw new Exception("无效数据");
+                    }
+                    if (fields[0] != null)
+                    {
+                        fields[0].ToList().ForEach(p =>
+                        {
+                            tableTemplate.Fields.Add(p);
+                        });
+                    }
+                    if (fields[1] != null)
+                    {
+                        fields[1].ToList().ForEach(p =>
+                        {
+                            var field = tableTemplate.Fields.FirstOrDefault(q => q.Id == p.Id);
+                            if (field == null)
+                            {
+                                throw new Exception("无效数据");
+                            }
+                            tableTemplate.Fields.Remove(field);
+                        });
+                    }
+                    db.SaveChanges();
+                    tran.Commit();
+                    return StatusCode(HttpStatusCode.NoContent);
+                }
+                catch (Exception ex) {
+                    tran.Rollback();
+                    return BadRequest(ex.Message);
+                }
+            }
         }
 
 

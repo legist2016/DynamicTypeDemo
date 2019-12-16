@@ -8,7 +8,7 @@ export const environment = {
     config: {
       apiUrl:{
         TableTemplate:"http://localhost:4062/api/template",
-        TableTemplateField:"http://localhost:4062/api/template/fields",
+        TableTemplateField:"http://localhost:4062/api/template",
       },
       apiProductUrl: "http://192.168.202.213/cm/api/product",
       apiOrderUrl: "http://192.168.202.213/cm/api/order",

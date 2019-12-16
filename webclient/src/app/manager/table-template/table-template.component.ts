@@ -8,6 +8,7 @@ import { ManagerBase } from 'src/app/wizard';
 })
 export class TableTemplateComponent extends ManagerBase {
 
+  designData = null
   constructor() {
     super()
     this.context['buttons'] = [{ key: 'design', name: '设计' }, { key: 'edit', name: '编辑' }, { key: 'delete', name: '删除' }];
@@ -27,7 +28,7 @@ export class TableTemplateComponent extends ManagerBase {
   methodFromParent(key, node) {
     if (key == "edit") this.onEdit(node);
     if (key == "delete") this.onDelete(node);
-    if (key == "design") this.onEdit(node);
+    if (key == "design") this.onDesign(node);
   }
 
   columnDefs = [
@@ -61,4 +62,16 @@ export class TableTemplateComponent extends ManagerBase {
     })
   }
 
+  onDesign(node){
+    this.designData = node.data 
+    console.log(this.designData)
+  }
+
+  saveDesign(data){
+    if(data){
+      this.ds.putData("TableTemplateField", `${this.designData.Id}/fields`,data)
+    } else{
+      this.designData = null
+    }    
+  }
 }

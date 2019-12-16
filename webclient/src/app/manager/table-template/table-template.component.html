@@ -19,10 +19,7 @@
         <app-table-template-edit [data]="editData" (do)="onEditSave($event)"></app-table-template-edit>
     </app-popup>
 
-    <app-popup *ngIf="0" class="popup-fullscreen">
-        <div>
-            <app-table-template-field [ds]='ds'></app-table-template-field>
-        </div>
-        <div><button>保存</button></div>
+    <app-popup *ngIf="designData" class="popup-fullscreen" (close)="saveDesign(null)">
+        <app-table-template-field [ds]='ds' [template]='designData' (close)="saveDesign(null)" (save)="saveDesign($event)"></app-table-template-field>
     </app-popup>
 </div>

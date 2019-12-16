@@ -1,7 +1,6 @@
-<div style="height: 100%;width: 100%;">
-    <button (click)="onNew()">New</button>
-    <button (click)="onSave()">Save</button>
-    <ag-grid-angular style="height: 100%;width: 100%;" class="ag-theme-balham"
+<div class="up-down-split" *ngIf="ds.data[typename+'_list']"
+>
+    <ag-grid-angular style="height: 100%;width: 100%;" class="ag-theme-balham flex"
         [localeText]='localeText'
         [rowData]="ds.data[typename+'_list']" 
         [columnDefs]="columnDefs" 
@@ -18,4 +17,9 @@
         (rowEditingStopped)='rowEditingStopped($event)' 
         editType="fullRow">
     </ag-grid-angular>
+    <div>
+    <button (click)="onNew()">New</button>
+    <button (click)="onSave()">Save</button>
+    <button (click)="close.emit()">Save</button>
+    </div>
 </div>
