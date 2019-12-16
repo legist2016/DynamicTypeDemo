@@ -69,7 +69,11 @@ export class TableTemplateComponent extends ManagerBase {
 
   saveDesign(data){
     if(data){
-      this.ds.putData("TableTemplateField", `${this.designData.Id}/fields`,data)
+      this.ds.putData("TableTemplateField", `${this.designData.Id}/fields`,data,()=>{
+        if(data[3]){
+          data[3]()
+        }
+      })
     } else{
       this.designData = null
     }    

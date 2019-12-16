@@ -98,7 +98,10 @@ namespace DynamicTableTemplateManager.Controllers
             {
                 return NotFound();
             }
-
+            if (tableTemplate.Fields.Count() > 0)
+            {
+                return BadRequest("非空无法删除。");
+            }
             //db.TableTemplates.Remove(tableTemplate);
             tableTemplate.IsDelete = true;
             db.SaveChanges();
@@ -131,20 +134,6 @@ namespace DynamicTableTemplateManager.Controllers
             using (var tran = db.Database.BeginTransaction())
             {
                 try {
-                    if (fields[2] != null)
-                    {
-                        fields[2].ToList().ForEach(p =>
-                        {
-                           
-                            if (db.TableTemplateFields.Count(q => p.Id == q.Id && p.TableTemplateId == q.TableTemplateId)!=1)
-                            {
-                                throw new Exception("无效数据");
-                            }
-
-                            db.Entry(p).State = EntityState.Modified;
-                        });
-                    }
-                    db.SaveChanges();
                     TableTemplate tableTemplate = db.TableTemplates.Find(id);
                     if (tableTemplate == null)
                     {
@@ -157,6 +146,7 @@ namespace DynamicTableTemplateManager.Controllers
                             tableTemplate.Fields.Add(p);
                         });
                     }
+                    db.SaveChanges();
                     if (fields[1] != null)
                     {
                         fields[1].ToList().ForEach(p =>
@@ -164,9 +154,25 @@ namespace DynamicTableTemplateManager.Controllers
                             var field = tableTemplate.Fields.FirstOrDefault(q => q.Id == p.Id);
                             if (field == null)
                             {
-                                throw new Exception("无效数据");
+                                throw new Exception(string.Format("无效删除数据:{0},{1}",p.Name,p.Title));
                             }
                             tableTemplate.Fields.Remove(field);
+                            db.TableTemplateFields.Remove(field);
+                        });
+                    }
+                    db.SaveChanges();
+                    if (fields[2] != null)
+                    {
+                        fields[2].ToList().ForEach(p =>
+                        {
+                            var field = tableTemplate.Fields.FirstOrDefault(q => q.Id == p.Id);
+                            if (field == null)
+                            {
+                                throw new Exception("无效数据");
+                            }
+
+                            db.Entry(field).State = EntityState.Detached;
+                            db.Entry(p).State = EntityState.Modified;
                         });
                     }
                     db.SaveChanges();
