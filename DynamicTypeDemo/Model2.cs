@@ -4,7 +4,7 @@ namespace DynamicTypeDemo
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    using DynamicTypeDemo.Template;
+    using DynamicTypeDemo.Entities;
 
     public partial class Model2 : DbContext
     {

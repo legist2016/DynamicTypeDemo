@@ -1,14 +1,6 @@
-﻿using DynamicTypeDemo.Template;
-using Newtonsoft.Json;
+﻿using DynamicTypeDemo.Entities;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations.Model;
-using System.Data.Entity.SqlServer;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicTypeDemo
 {

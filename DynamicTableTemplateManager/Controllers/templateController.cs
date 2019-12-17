@@ -1,5 +1,5 @@
-﻿using DynamicTypeDemo;
-using DynamicTypeDemo.Template;
+﻿using DynamicTypeDemo.Services;
+using DynamicTypeDemo.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,15 +10,16 @@ using System.Web.Http;
 using System.Web.Http.Description;
 
 namespace DynamicTableTemplateManager.Controllers
-{
+{    
     public class templateController : ApiController
     {
-        private Model2 db = new Model2();
+        //private Model2 db = new Model2();
+        private TableTemplateService service = new TableTemplateService();
 
         // GET: api/template
         public IHttpActionResult GetTableTemplate()
         {
-            var list =  db.TableTemplates.Where(p=>p.IsDelete == false);
+            var list = service.GetTableTemplate(); // db.TableTemplates.Where(p=>p.IsDelete == false);
             return Ok(list);
         }
 
@@ -26,7 +27,7 @@ namespace DynamicTableTemplateManager.Controllers
         [ResponseType(typeof(TableTemplate))]
         public IHttpActionResult GetTableTemplate(int id)
         {
-            TableTemplate tableTemplate = db.TableTemplates.Find(id);
+            TableTemplate tableTemplate = service.GetTableTemplate(id);// db.TableTemplates.Find(id);
             if (tableTemplate == null)
             {
                 return NotFound();
@@ -39,6 +40,7 @@ namespace DynamicTableTemplateManager.Controllers
 
         // PUT: api/template/5
         [ResponseType(typeof(void))]
+        [NonAction]
         public IHttpActionResult PutTableTemplate(int id, TableTemplate tableTemplate)
         {
             if (!ModelState.IsValid)
@@ -52,23 +54,25 @@ namespace DynamicTableTemplateManager.Controllers
             }
 
 
-            db.Entry(tableTemplate).State = EntityState.Modified;
-            db.Entry(tableTemplate).Property("IsDelete").IsModified = false;
+            //db.Entry(tableTemplate).State = EntityState.Modified;
+            //db.Entry(tableTemplate).Property("IsDelete").IsModified = false;
 
             try
             {
-                db.SaveChanges();
+                //db.SaveChanges();
+                service.PutTableTemplate(id, tableTemplate);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (NotFoundException)
             {
-                if (!TableTemplateExists(id))
-                {
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -83,8 +87,9 @@ namespace DynamicTableTemplateManager.Controllers
                 return BadRequest(ModelState);
             }
 
-            db.TableTemplates.Add(tableTemplate);
-            db.SaveChanges();
+            //db.TableTemplates.Add(tableTemplate);
+            //db.SaveChanges();
+            service.PostTableTemplate(tableTemplate);
 
             return CreatedAtRoute("DefaultApi", new { id = tableTemplate.Id }, tableTemplate);
         }
@@ -93,7 +98,10 @@ namespace DynamicTableTemplateManager.Controllers
         [ResponseType(typeof(TableTemplate))]
         public IHttpActionResult DeleteTableTemplate(int id)
         {
-            TableTemplate tableTemplate = db.TableTemplates.Find(id);
+            try
+            {
+                TableTemplate tableTemplate = service.DeleteTableTemplate(id);
+                /*db.TableTemplates.Find(id);
             if (tableTemplate == null)
             {
                 return NotFound();
@@ -105,23 +113,38 @@ namespace DynamicTableTemplateManager.Controllers
             //db.TableTemplates.Remove(tableTemplate);
             tableTemplate.IsDelete = true;
             db.SaveChanges();
+            */
+                return Ok(tableTemplate);
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            return Ok(tableTemplate);
         }
 
-        // GET: api/template/fields/5
-        //[ResponseType(typeof(TableTemplate))]
         [ActionName("fields")]
         [HttpGet]
         public IHttpActionResult GetTableTemplateFields(int id)
         {
-            TableTemplate tableTemplate = db.TableTemplates.Find(id);
+            /*TableTemplate tableTemplate = db.TableTemplates.Find(id);
             if (tableTemplate == null)
             {
                 return NotFound();
+            }*/
+            try
+            {
+                var fields = service.GetTableTemplateFields(id);
+                return Ok(fields);
             }
-
-            return Ok(tableTemplate.Fields);
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         // PUT: api/template/fields/5
@@ -131,7 +154,7 @@ namespace DynamicTableTemplateManager.Controllers
         [HttpPut]
         public IHttpActionResult PutTableTemplateFields(int id, List<TableTemplateField[]> fields)
         {
-            using (var tran = db.Database.BeginTransaction())
+            /*using (var tran = db.Database.BeginTransaction())
             {
                 try {
                     TableTemplate tableTemplate = db.TableTemplates.Find(id);
@@ -183,7 +206,27 @@ namespace DynamicTableTemplateManager.Controllers
                     tran.Rollback();
                     return BadRequest(ex.Message);
                 }
+            }*/
+            try
+            {
+                //db.SaveChanges();
+                service.PutTableTemplateFields(id, fields);
             }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+
         }
 
 
@@ -191,14 +234,14 @@ namespace DynamicTableTemplateManager.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                service.Dispose();
             }
             base.Dispose(disposing);
         }
 
-        private bool TableTemplateExists(int id)
+        /*private bool TableTemplateExists(int id)
         {
             return db.TableTemplates.Count(e => e.Id == id) > 0;
-        }
+        }*/
     }
 }

@@ -112,6 +112,10 @@ export class TableTemplateFieldComponent extends ManagerBase {
       }
     })
     console.log([add, del, mod])
-    this.save.emit([add, del, mod,()=>{this.deleteList=[]}])
+    this.save.emit([add, del, mod,()=>{
+      this.deleteList=[]
+      add.forEach(p=>{p._rowDataObjectStates=null})
+      mod.forEach(p=>{p._rowDataObjectStates=null})
+    }])
   }
 }

@@ -9,10 +9,11 @@ using System.Reflection.Emit;
 using System.Linq;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.Migrations.Builders;
+using DynamicTypeDemo.Entities;
 
-namespace DynamicTypeDemo.Template
+namespace DynamicTypeDemo.Entities
 {
-    public static class Template
+    public static class TableTemplateExtension
     {
         public static Type CreateType(this TableTemplate template, string typeName, string tableName)
         {
