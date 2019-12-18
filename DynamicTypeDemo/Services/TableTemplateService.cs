@@ -37,6 +37,10 @@ namespace DynamicTypeDemo.Services
         public void PutTableTemplate(int id, TableTemplate tableTemplate) 
              
         {
+            if (id != tableTemplate.Id)
+            {
+                throw new BadRequestException();
+            }
 
             db.Entry(tableTemplate).State = EntityState.Modified;
             db.Entry(tableTemplate).Property("IsDelete").IsModified = false;

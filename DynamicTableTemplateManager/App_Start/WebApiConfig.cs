@@ -16,8 +16,8 @@ namespace DynamicTableTemplateManager
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}/{action}",
-                defaults: new { id = RouteParameter.Optional , action = RouteParameter.Optional}
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
             );
 
             /*config.Routes.MapHttpRoute(

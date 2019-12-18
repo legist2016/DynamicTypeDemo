@@ -1,12 +1,21 @@
 ﻿using DynamicTypeDemo.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DynamicTypeDemo
 {
     class Program
     {
         static void Main(string[] args)
+        {
+            var db = new Model2();
+            var template = db.TableTemplates.FirstOrDefault(p=>p.Id == 3005);
+            var sql = template.SQLGenerateCreateTable(template.Name);
+            Console.Write(sql);
+            Console.ReadKey();
+        }
+        void test()
         {
             /*var t = TypeCreator.Creator("Qwert", 10);
             object obj = Activator.CreateInstance(t);
