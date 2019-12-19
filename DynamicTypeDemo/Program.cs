@@ -16,8 +16,8 @@ namespace DynamicTypeDemo
             Console.Write(sql);
             Console.ReadKey();*/
 
-            //var service = new DynamicEntityService(3005, "T_Metadata");
-            var service = new DynamicEntityService(typeof(TableTemplate), "TableTemplate");
+            var service = new DynamicEntityService(3005, "T_Metadata");
+            //var service = new DynamicEntityService(typeof(TableTemplate), "TableTemplate");
             var list = service.GetEntities();
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
             Console.Write(json);
