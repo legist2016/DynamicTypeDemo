@@ -1,4 +1,5 @@
 ﻿using DynamicTypeDemo.Entities;
+using DynamicTypeDemo.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -9,11 +10,6 @@ using System.Threading.Tasks;
 
 namespace DynamicTypeDemo.Services
 {
-    public class NotFoundException : Exception { }
-    public class BadRequestException : Exception {
-        public BadRequestException():base() { }
-        public BadRequestException(string message):base(message) { }
-    }
 
     public class TableTemplateService: IDisposable
     {

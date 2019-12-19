@@ -38,6 +38,10 @@ export class TableTemplateFieldComponent extends ManagerBase {
       headerName: '类型', field: 'Type', width: 120, cellEditor: 'agSelectCellEditor', cellEditorParams: { values: [1, 2] },
       valueFormatter: (params) => { return ['', '整型', '字符型'][params.value] }
     },
+    {
+      headerName: '主键', field: 'IsKey', width: 120, cellEditor: 'agSelectCellEditor', cellEditorParams: { values: [false, true] },
+      valueFormatter: (params) => { return ['否', '是'][params.value] }
+    },
     { headerName: '长度', field: 'Length', width: 120 },
   ]
 

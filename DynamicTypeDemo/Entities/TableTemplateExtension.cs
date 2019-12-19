@@ -15,7 +15,11 @@ namespace DynamicTypeDemo.Entities
 {
     public static class TableTemplateExtension
     {
-        public static Type CreateType(this TableTemplate template, string typeName, string tableName)
+        public static Type CreateType(this TableTemplate template, string typeName)
+        {
+            return CreateType(template, typeName, typeName);
+        }
+        public static Type CreateType(this TableTemplate template, string typeName , string tableName)
         {
             //应用程序域
             AppDomain currentDomain = System.Threading.Thread.GetDomain(); //AppDomain.CurrentDomain;
@@ -160,7 +164,7 @@ namespace DynamicTypeDemo.Entities
                 {                    
                     table.PrimaryKey.Columns.Add(field.Name);
                 }
-                if (field.Name == "sys_id")
+                if (field.Name.ToLower() == "sys_id")
                 {
                     column.IsIdentity = true;
                 }

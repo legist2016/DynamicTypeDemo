@@ -1,4 +1,5 @@
 ﻿using DynamicTypeDemo.Entities;
+using DynamicTypeDemo.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,16 @@ namespace DynamicTypeDemo
     {
         static void Main(string[] args)
         {
-            var db = new Model2();
+            /*var db = new Model2();
             var template = db.TableTemplates.FirstOrDefault(p=>p.Id == 3005);
             var sql = template.SQLGenerateCreateTable(template.Name);
             Console.Write(sql);
+            Console.ReadKey();*/
+
+            var service = new DynamicEntityService(3005, "T_Metadata");
+            var list = service.GetEntities(2);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
+            Console.Write(json);
             Console.ReadKey();
         }
         void test()
