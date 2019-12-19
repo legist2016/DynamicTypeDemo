@@ -19,33 +19,6 @@ namespace DynamicTypeDemo.Services
             m = m.MakeGenericMethod(genericMethodTypes);
             return m.Invoke(null, parameters);
         }
-        /*static public List<T> InvokeToList<T>(IQueryable<T> list)
-        {
-            return list.ToList();
-        }
-        static public DynamicObject ToList(this DynamicObject obj)
-        {
-            var newobj = CallMethod("InvokeToList", new Type[] { obj.EntityType }, new object[] { obj.Object });
-            return new DynamicObject() { Object = newobj, EntityType = obj.EntityType };
-        }
-
-        static public Expression<Func<T, bool>> Where<T, V>(string field, V value)
-        {
-            var param = Expression.Parameter(typeof(T));
-            var property = Expression.PropertyOrField(param, field);
-            var body = Expression.Equal(property, Expression.Constant(value, typeof(V)));
-            return Expression.Lambda<Func<T, bool>>(body, param);
-        }
-
-        static public DynamicObject Where(this DynamicObject obj, string field, object value, Type valueType)
-        {
-            var newobj= CallMethod("InvokeWhere", new Type[] { obj.EntityType, valueType }, new object[] { obj.Object, field, value });             
-            return new DynamicObject() { Object = newobj, EntityType = obj.EntityType }; 
-        }
-        static public IQueryable<T> InvokeWhere<T,V>(IQueryable<T> list, string field, V value)
-        {
-            return list.Where(Where<T,V>(field, value));
-        }*/
 
         static public DynamicObject<T> ConvertDynamicObject<T>(object obj) where T:class
         {
@@ -74,7 +47,7 @@ namespace DynamicTypeDemo.Services
     }
 
     public class DynamicObject{
-        public DynamicObject(){}
+        //public DynamicObject(){}
         public DynamicObject(object obj, Type type) {
             Object = obj;
             EntityType = type;
@@ -146,8 +119,7 @@ namespace DynamicTypeDemo.Services
         public DynamicEntityModel(Type type)
             : base("name=Model1")
         {
-            Database.SetInitializer<Model1>(null);
-            //type = TypeCreator.Creator("T_TEST", 10);
+            Database.SetInitializer<DynamicEntityModel>(null);
             Type = type;
         }
 
@@ -158,51 +130,7 @@ namespace DynamicTypeDemo.Services
                 modelBuilder.RegisterEntityType(Type);
             }
         }
-
-        /*public object CallMethod(string method, Type[] genericMethodTypes, object[] parameters = null)
-        {
-            var m = this.GetType().GetMethod(method);
-            m = m.MakeGenericMethod(genericMethodTypes);
-            return m.Invoke(null, parameters);
-        }
-
-        public DynamicObject getSet()
-        {
-            var set = CallMethod("InvokeGetSet", new Type[] { Type }, new object[] { this });
-            return new DynamicObject() {  Object = set, EntityType = Type };
-        }
-
-        static public IQueryable<T> InvokeGetSet<T>(object db) where T : class
-        {
-            DbContext Db = db as DbContext;
-            if (Db == null)
-            {
-                throw new Exception("无效的DbContext");
-            }
-            return Db.Set<T>();
-        }
-        /*public object getdata (Type type, string key, object value) 
-        {
-            var where = CallMethod("where", new Type[] { type, typeof(int) }, new object[] { key, value });
-            var list = CallMethod("queryData", new Type[] { type }, new object[] { this, where });
-            return list;
-
-        }*/
-        /*static public Expression<Func<T, bool>> where<T, V>(string field, V value)
-        {
-            var param = Expression.Parameter(typeof(T));
-            var property = Expression.PropertyOrField(param, field);
-            var body = Expression.Equal(property, Expression.Constant(value, typeof(V)));
-            return Expression.Lambda<Func<T, bool>>(body, param);
-        }
-
-        static public System.Collections.Generic.List<T> queryData<T>(object db, object where) where T : class
-        {
-            Expression<Func<T, bool>> Where = where as Expression<Func<T, bool>>;
-            System.Data.Entity.DbContext Db = db as System.Data.Entity.DbContext;
-            return Db.Set<T>().Where(Where).ToList();
-        }*/
-        
+       
     }
 
     public class DynamicEntityService
@@ -213,6 +141,14 @@ namespace DynamicTypeDemo.Services
 
         private Model2 db = new Model2();
         private DynamicObject dynamic = null;
+
+        public DynamicEntityService(Type entityType, string entityName)
+        {
+            EntityName = entityName;
+            EntityTypes.Add(EntityName, entityType);
+            dynamic = new DynamicObject(new DynamicEntityModel(EntityType), EntityType);
+        }
+
 
         public DynamicEntityService(int templateId, string entityName)
         {

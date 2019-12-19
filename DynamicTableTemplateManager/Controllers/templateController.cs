@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using DynamicTypeDemo.Exceptions;
 
 namespace DynamicTableTemplateManager.Controllers
 {
