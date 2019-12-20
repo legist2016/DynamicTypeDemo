@@ -25,23 +25,31 @@ namespace DynamicTypeDemo.Services
             return new DynamicObject<T>(){ Object = obj};
         }
 
-        static public DynamicObject DynamicMethods(this DynamicObject obj, string method, params object[] Params )
+        /*static public DynamicObject DynamicMethods(this DynamicObject obj, string method, params object[] Params )
         {
             var typed = CallMethod("ConvertDynamicObject", new Type[] { obj.EntityType}, new object[] { obj.Object});
             IDynamicObject dynamic = typed as IDynamicObject;
             return dynamic.DynamicMethods(method, Params);            
+        }*/
+
+        static public IDynamicObject Dynamic(this DynamicObject obj)
+        {
+            var typed = CallMethod("ConvertDynamicObject", new Type[] { obj.EntityType }, new object[] { obj.Object });
+            IDynamicObject dynamic = typed as IDynamicObject;
+            return dynamic;
         }
+
         static public DynamicObject Set(this DynamicObject obj)
         {
-            return obj.DynamicMethods("Set");
+            return obj.Dynamic().Set();
         }
         static public DynamicObject ToList(this DynamicObject obj)
         {
-            return obj.DynamicMethods("ToList");
+            return obj.Dynamic().ToList();
         }
-        static public DynamicObject Where(this DynamicObject obj, string field, object value)
+        static public DynamicObject Where(this DynamicObject obj, string field, string operation, object value)
         {
-            return obj.DynamicMethods("Where", field, value);
+            return obj.Dynamic().Where(field, operation, value);
         }
 
     }
@@ -58,14 +66,18 @@ namespace DynamicTypeDemo.Services
 
     public interface IDynamicObject
     {
-        DynamicObject DynamicMethods(string method, params object[] Params);
+        //DynamicObject DynamicMethods(string method, params object[] Params);
+        //DynamicObject dynamic(object obj);
+        DynamicObject Set();
+        DynamicObject ToList();
+        DynamicObject Where(string field,string operation , object value);
     }
 
     public class DynamicObject<T>: IDynamicObject where T:class
     {
         public object Object;
 
-        public DynamicObject DynamicMethods(string method, params object[] ps)
+        /*public DynamicObject DynamicMethods(string method, params object[] ps)
         {
             try
             {
@@ -88,26 +100,53 @@ namespace DynamicTypeDemo.Services
             {
                 throw;
             }
+        }*/
+        private DynamicObject dynamic(object obj)
+        {
+            return new DynamicObject(obj, typeof(T));
         }
-        DbSet Set()
+        public DynamicObject Set()
         {
             DbContext db = Object as DbContext;
-            return db.Set<T>();
+            return dynamic(db.Set<T>());
         }
 
-        List<T> ToList()
+        public DynamicObject ToList()
         {
             var list = Object as IEnumerable<T>;
-            return list.ToList();
+            return dynamic(list.ToList());
         }
 
-        IQueryable<T> Where(string field, object value)
+        public DynamicObject Where(string field, string operation, object value)
         {
             var list = Object as IQueryable<T>;
             var param = Expression.Parameter(typeof(T));
             var property = Expression.PropertyOrField(param, field);
-            var body = Expression.Equal(property, Expression.Constant(value, value.GetType()));
-            return list.Where(Expression.Lambda<Func<T, bool>>(body, param));
+            BinaryExpression body = null;
+
+            switch (operation)
+            {
+                case "==":
+                    body = Expression.Equal(property, Expression.Constant(value, value.GetType()));
+                    break;
+                case ">=":
+                    body = Expression.GreaterThanOrEqual(property, Expression.Constant(value, value.GetType()));
+                    break;
+                case "<=":
+                    body = Expression.LessThanOrEqual(property, Expression.Constant(value, value.GetType()));
+                    break;
+                case ">":
+                    body = Expression.GreaterThan(property, Expression.Constant(value, value.GetType()));
+                    break;
+                case "<":
+                    body = Expression.LessThan(property, Expression.Constant(value, value.GetType()));
+                    break;
+                case "!=":
+                    body = Expression.NotEqual(property, Expression.Constant(value, value.GetType()));
+                    break;
+            }
+
+            return dynamic(list.Where(Expression.Lambda<Func<T, bool>>(body, param)));
         }
     }
 
@@ -120,6 +159,7 @@ namespace DynamicTypeDemo.Services
             : base("name=Model1")
         {
             Database.SetInitializer<DynamicEntityModel>(null);
+            Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
             Type = type;
         }
 
@@ -137,22 +177,25 @@ namespace DynamicTypeDemo.Services
     {
         static private Dictionary<string, Type> EntityTypes = new Dictionary<string, Type>();
         public string EntityName { get; set; }
+
+        private DynamicEntityModel dynamicDb;
+
         public TableTemplate TableTemplate { get; set; }
 
         private Model2 db = new Model2();
         private DynamicObject dynamic = null;
-
+        private Type _entityType = null;
 
         public DynamicEntityService(Type entityType, string entityName)
         {
             EntityName = entityName;
-            EntityTypes.Add(EntityName, entityType);
-            dynamic = new DynamicObject(new DynamicEntityModel(EntityType), EntityType);
+            _entityType = entityType;
+            dynamicDb = new DynamicEntityModel(EntityType);
+            dynamic = new DynamicObject(dynamicDb, EntityType);
         }
 
 
-
-        public DynamicEntityService(int templateId, string entityName, Type[] interfaces)
+        public DynamicEntityService(int templateId, string entityName)
         {
             TableTemplate = db.TableTemplates.Find(templateId);
             if (TableTemplate == null)
@@ -160,40 +203,50 @@ namespace DynamicTypeDemo.Services
                 throw new NotFoundException();
             }
             EntityName = entityName;
-            dynamic = new DynamicObject(new DynamicEntityModel(EntityType), EntityType);
+            dynamicDb = new DynamicEntityModel(EntityType);
+            dynamic = new DynamicObject(dynamicDb, EntityType);
         }
 
         public Type EntityType
         {
             get
             {
-
-                Type type;
-                if (EntityTypes.ContainsKey(EntityName))
+                if (_entityType == null)
                 {
-                    type = EntityTypes[EntityName];
+                    if (EntityTypes.ContainsKey(EntityName))
+                    {
+                        _entityType = EntityTypes[EntityName];
+                    }
+                    else
+                    {
+                        _entityType = TableTemplate.CreateType(EntityName);
+                        EntityTypes.Add(EntityName, _entityType);
+                    }
                 }
-                else 
-                {
-                    type = TableTemplate.CreateType(EntityName, null, new Type[] { typeof(IT_GeneralTable) });
-                    EntityTypes.Add(EntityName, type);
-                }
-                return type;
-
+                return _entityType;
             }
         }
 
         public object GetEntities()
         {
             //var obj = new DynamicObject(dynamic, EntityType);
-            return dynamic.DynamicMethods("Set").DynamicMethods("ToList").Object;
+            return dynamic.Set().ToList().Object;
         }
 
-        public object GetEntities(object key)
+        public object GetEntity(object key)
         {
             //var obj = new DynamicObject(dynamic, EntityType);
-            return dynamic.Set().Where("SYS_ID",key).ToList().Object;
+            return dynamic.Set().Where("SYS_ID","==",key).ToList().Object;
         }
 
+        public void PutEntity(object key, object entity)
+        {
+            if (EntityType.GetProperty("SYS_ID").GetValue(entity) != key)
+            {
+                throw new BadRequestException();
+            }
+            dynamicDb.Entry(entity).State = EntityState.Modified;
+            dynamicDb.SaveChanges();
+        }
     }
 }

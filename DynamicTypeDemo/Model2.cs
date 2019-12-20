@@ -12,6 +12,7 @@ namespace DynamicTypeDemo
             : base("name=Model1")
         {
             Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
+            Database.SetInitializer<Model2>(null);
         }
 
         //public virtual DbSet<T_CM_PRODUCT> T_CM_PRODUCT { get; set; }
