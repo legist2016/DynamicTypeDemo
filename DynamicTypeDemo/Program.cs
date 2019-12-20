@@ -10,18 +10,21 @@ namespace DynamicTypeDemo
     {
         static void Main(string[] args)
         {
+            
+            var sql = typeof(IT_GeneralTable).SQLGenerateCreateTable("dddddddddddd");
             /*var db = new Model2();
             var template = db.TableTemplates.FirstOrDefault(p=>p.Id == 3005);
-            var sql = template.SQLGenerateCreateTable(template.Name);
+            var sql = template.SQLGenerateCreateTable(template.Name);*/
             Console.Write(sql);
-            Console.ReadKey();*/
+            Console.ReadKey();
 
-            //var service = new DynamicEntityService(3005, "T_Metadata");
-            var service = new DynamicEntityService(typeof(TableTemplate), "TableTemplate");
+            var service = new DynamicEntityService(3005, "T_Metadata", new Type[] { typeof(IT_GeneralTable)});
+
+            /*//var service = new DynamicEntityService(typeof(TableTemplate), "TableTemplate");
             var list = service.GetEntities();
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
             Console.Write(json);
-            Console.ReadKey();
+            Console.ReadKey();*/
         }
         void test()
         {

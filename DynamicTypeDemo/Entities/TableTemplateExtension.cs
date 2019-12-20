@@ -10,16 +10,17 @@ using System.Linq;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.Migrations.Builders;
 using DynamicTypeDemo.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DynamicTypeDemo.Entities
 {
     public static class TableTemplateExtension
     {
-        public static Type CreateType(this TableTemplate template, string typeName)
+        public static Type CreateType(this TableTemplate template, string typeName, Type parent = null, Type[] interfaces = null)
         {
-            return CreateType(template, typeName, typeName);
+            return CreateType(template, typeName, typeName, parent,interfaces);
         }
-        public static Type CreateType(this TableTemplate template, string typeName , string tableName)
+        public static Type CreateType(this TableTemplate template, string typeName , string tableName,Type parent = null, Type[] interfaces =null )
         {
             //应用程序域
             AppDomain currentDomain = System.Threading.Thread.GetDomain(); //AppDomain.CurrentDomain;
@@ -50,10 +51,15 @@ namespace DynamicTypeDemo.Entities
             moduleBuilder = assemblyBuilder.DefineDynamicModule(string.Format("Module{0}", typeName), true);
 
             //Define a runtime class with specified name and attributes.
-            typeBuilder = moduleBuilder.DefineType(typeName, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit | TypeAttributes.Serializable);
+            
+            typeBuilder = moduleBuilder.DefineType(
+                typeName, 
+                TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit | TypeAttributes.Serializable,
+                parent,
+                interfaces
+                );
             typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.Schema.TableAttribute).GetConstructor(new Type[] { typeof(string)}),new object[] { tableName }));
 
-            methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
             foreach (var field in template.Fields)
             {
@@ -73,9 +79,15 @@ namespace DynamicTypeDemo.Entities
                 }
                 fieldBuilder = typeBuilder.DefineField("field_" + field.Name, t, FieldAttributes.Private);
                 propertyBuilder = typeBuilder.DefineProperty(field.Name, System.Reflection.PropertyAttributes.HasDefault, t, null);
+                methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
                 if (field.IsKey)
                 {
                     propertyBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.KeyAttribute).GetConstructor(Type.EmptyTypes), new object[0]));//
+                    methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig | 
+                        //MethodAttributes.Final | 
+                        //MethodAttributes.NewSlot |
+                        MethodAttributes.Virtual
+                        ;
                 }
 
                 if (propertyBuilder.PropertyType == typeof(string))
@@ -83,7 +95,7 @@ namespace DynamicTypeDemo.Entities
                     propertyBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.MaxLengthAttribute).GetConstructor(new Type[] { typeof(int) }), new object[] { field.Length }));//
                 }
 
-                methodBuilder = typeBuilder.DefineMethod("get_" + field.Name, methodAttrs, t, Type.EmptyTypes);
+                methodBuilder = typeBuilder.DefineMethod("get_" + field.Name, methodAttrs,  t, Type.EmptyTypes);
                 ilGenerator = methodBuilder.GetILGenerator();
                 ilGenerator.Emit(OpCodes.Ldarg_0);
                 ilGenerator.Emit(OpCodes.Ldfld, fieldBuilder);
@@ -103,7 +115,61 @@ namespace DynamicTypeDemo.Entities
 
             return typeBuilder.CreateType();
         }
+        public static string SQLGenerateCreateTable(this Type type, string tableName)
+        {
+            SqlServerMigrationSqlGenerator gen = new SqlServerMigrationSqlGenerator();
+            ColumnBuilder columnBuilder = new ColumnBuilder();
+            var properties = type.GetProperties();
+            var operations = new List<MigrationOperation>();
+            var table = new CreateTableOperation(tableName);
+            table.PrimaryKey = new AddPrimaryKeyOperation();
 
+            foreach(var property in properties)
+            {
+                PrimitiveTypeKind typeKind;
+                if (property.PropertyType == typeof(int))
+                {
+                    typeKind = PrimitiveTypeKind.Int32;
+                }
+                else if (property.PropertyType == typeof(string))
+                {
+                    typeKind = PrimitiveTypeKind.String;
+                }
+                else if (property.PropertyType == typeof(bool))
+                {
+                    typeKind = PrimitiveTypeKind.Boolean;
+                }
+                else
+                {
+                    //typeKind = PrimitiveTypeKind.String;
+                    continue;
+                }
+                var column = new ColumnModel(typeKind);
+                column.Name = property.Name;
+                if (column.Type == PrimitiveTypeKind.String)
+                {
+                    var attribute = property.GetCustomAttribute(typeof(MaxLengthAttribute)) as MaxLengthAttribute;
+                    if (attribute != null)
+                    {
+                        column.MaxLength = attribute.Length;
+                    }
+                }
+                if (property.IsDefined(typeof(KeyAttribute)))
+                {
+                    table.PrimaryKey.Columns.Add(property.Name);
+                    if (column.Type == PrimitiveTypeKind.Int32)
+                    {
+                        column.IsIdentity = true;
+                    }
+                }
+                table.Columns.Add(column);
+
+            }
+            operations.Add(table);
+            var sql = gen.Generate(operations, "2008").FirstOrDefault();
+
+            return sql.Sql;
+        }
         public static string SQLGenerateAlterTable(this TableTemplate template, string tableName)
         {
             SqlServerMigrationSqlGenerator gen = new SqlServerMigrationSqlGenerator();

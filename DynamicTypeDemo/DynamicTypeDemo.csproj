@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\IT_Tables.cs" />
     <Compile Include="Exceptions\Exception.cs" />
     <Compile Include="Services\DynamicEntityService.cs" />
     <Compile Include="Model1.cs" />

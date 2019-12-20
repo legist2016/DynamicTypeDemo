@@ -142,6 +142,7 @@ namespace DynamicTypeDemo.Services
         private Model2 db = new Model2();
         private DynamicObject dynamic = null;
 
+
         public DynamicEntityService(Type entityType, string entityName)
         {
             EntityName = entityName;
@@ -150,7 +151,8 @@ namespace DynamicTypeDemo.Services
         }
 
 
-        public DynamicEntityService(int templateId, string entityName)
+
+        public DynamicEntityService(int templateId, string entityName, Type[] interfaces)
         {
             TableTemplate = db.TableTemplates.Find(templateId);
             if (TableTemplate == null)
@@ -173,7 +175,7 @@ namespace DynamicTypeDemo.Services
                 }
                 else 
                 {
-                    type = TableTemplate.CreateType(EntityName);
+                    type = TableTemplate.CreateType(EntityName, null, new Type[] { typeof(IT_GeneralTable) });
                     EntityTypes.Add(EntityName, type);
                 }
                 return type;
