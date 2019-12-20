@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Infrastructure.Annotations;
+using System.Data.Entity.Migrations.Builders;
 using System.Data.Entity.Migrations.Model;
 using System.Data.Entity.Migrations.Sql;
 using System.Data.Entity.SqlServer;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Linq;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.Migrations.Builders;
-using DynamicTypeDemo.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace DynamicTypeDemo.Entities
 {
@@ -60,6 +59,20 @@ namespace DynamicTypeDemo.Entities
                 );
             typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.Schema.TableAttribute).GetConstructor(new Type[] { typeof(string)}),new object[] { tableName }));
 
+            foreach (var type in interfaces)
+            {
+                var properties = type.GetProperties();
+                foreach (var property in properties)
+                {
+                    int length = 0;
+                    var attribute = property.GetCustomAttribute(typeof(MaxLengthAttribute)) as MaxLengthAttribute;
+                    if (attribute != null)
+                    {
+                        length = attribute.Length;
+                    }
+                    typeBuilder.CreateProperty(property.Name, property.PropertyType, length, property.IsDefined(typeof(KeyAttribute)), true);
+                }
+            }
 
             foreach (var field in template.Fields)
             {
@@ -72,49 +85,59 @@ namespace DynamicTypeDemo.Entities
                 {
                     t = typeof(string);
                 }
-
+                else if (field.Type == TableTemplateFieldType.Boolean)
+                {
+                    t = typeof(bool);
+                }
                 else
                 {
                     t = typeof(string);
                 }
-                fieldBuilder = typeBuilder.DefineField("field_" + field.Name, t, FieldAttributes.Private);
-                propertyBuilder = typeBuilder.DefineProperty(field.Name, System.Reflection.PropertyAttributes.HasDefault, t, null);
-                methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-                if (field.IsKey)
-                {
-                    propertyBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.KeyAttribute).GetConstructor(Type.EmptyTypes), new object[0]));//
-                    methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig | 
-                        //MethodAttributes.Final | 
-                        //MethodAttributes.NewSlot |
-                        MethodAttributes.Virtual
-                        ;
-                }
-
-                if (propertyBuilder.PropertyType == typeof(string))
-                {
-                    propertyBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.MaxLengthAttribute).GetConstructor(new Type[] { typeof(int) }), new object[] { field.Length }));//
-                }
-
-                methodBuilder = typeBuilder.DefineMethod("get_" + field.Name, methodAttrs,  t, Type.EmptyTypes);
-                ilGenerator = methodBuilder.GetILGenerator();
-                ilGenerator.Emit(OpCodes.Ldarg_0);
-                ilGenerator.Emit(OpCodes.Ldfld, fieldBuilder);
-                ilGenerator.Emit(OpCodes.Ret);
-                propertyBuilder.SetGetMethod(methodBuilder);
-
-                methodBuilder = typeBuilder.DefineMethod("set_" + field.Name, methodAttrs, typeof(void), new Type[] { t });
-                ilGenerator = methodBuilder.GetILGenerator();
-                ilGenerator.Emit(OpCodes.Ldarg_0);
-                ilGenerator.Emit(OpCodes.Ldarg_1);
-                ilGenerator.Emit(OpCodes.Stfld, fieldBuilder);
-                ilGenerator.Emit(OpCodes.Ret);
-                propertyBuilder.SetSetMethod(methodBuilder);
+                typeBuilder.CreateProperty(field.Name, t, field.Length);
 
             }
 
 
             return typeBuilder.CreateType();
         }
+
+        static void CreateProperty(this TypeBuilder typeBuilder, string name, Type t, int Length ,  bool isKey = false, bool isVirtual = false)
+        {
+            var fieldBuilder = typeBuilder.DefineField("field_" + name, t, FieldAttributes.Private);
+            var propertyBuilder = typeBuilder.DefineProperty(name, System.Reflection.PropertyAttributes.HasDefault, t, null);
+            var methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+            if(isVirtual) {
+                methodAttrs |= MethodAttributes.Virtual;
+            }
+
+            if (isKey)
+            {
+                propertyBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.KeyAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
+            }
+
+            if (propertyBuilder.PropertyType == typeof(string) && Length > 0)
+            {
+                propertyBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.ComponentModel.DataAnnotations.MaxLengthAttribute).GetConstructor(new Type[] { typeof(int) }), new object[] { Length }));//
+            }
+
+            var methodBuilder = typeBuilder.DefineMethod("get_" + name, methodAttrs, t, Type.EmptyTypes);
+            var ilGenerator = methodBuilder.GetILGenerator();
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.Emit(OpCodes.Ldfld, fieldBuilder);
+            ilGenerator.Emit(OpCodes.Ret);
+            propertyBuilder.SetGetMethod(methodBuilder);
+
+            methodBuilder = typeBuilder.DefineMethod("set_" + name, methodAttrs, typeof(void), new Type[] { t });
+            ilGenerator = methodBuilder.GetILGenerator();
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.Emit(OpCodes.Ldarg_1);
+            ilGenerator.Emit(OpCodes.Stfld, fieldBuilder);
+            ilGenerator.Emit(OpCodes.Ret);
+            propertyBuilder.SetSetMethod(methodBuilder);
+        }
+
+
+
         public static string SQLGenerateCreateTable(this Type type, string tableName)
         {
             SqlServerMigrationSqlGenerator gen = new SqlServerMigrationSqlGenerator();

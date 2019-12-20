@@ -12,7 +12,8 @@ namespace DynamicTypeDemo.Entities
     public enum TableTemplateFieldType
     {
         Int=1,
-        String
+        String,
+        Boolean
     }
     //[DataContract]
     public class TableTemplateField

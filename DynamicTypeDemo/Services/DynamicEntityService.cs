@@ -25,13 +25,6 @@ namespace DynamicTypeDemo.Services
             return new DynamicObject<T>(){ Object = obj};
         }
 
-        /*static public DynamicObject DynamicMethods(this DynamicObject obj, string method, params object[] Params )
-        {
-            var typed = CallMethod("ConvertDynamicObject", new Type[] { obj.EntityType}, new object[] { obj.Object});
-            IDynamicObject dynamic = typed as IDynamicObject;
-            return dynamic.DynamicMethods(method, Params);            
-        }*/
-
         static public IDynamicObject Dynamic(this DynamicObject obj)
         {
             var typed = CallMethod("ConvertDynamicObject", new Type[] { obj.EntityType }, new object[] { obj.Object });
@@ -55,7 +48,6 @@ namespace DynamicTypeDemo.Services
     }
 
     public class DynamicObject{
-        //public DynamicObject(){}
         public DynamicObject(object obj, Type type) {
             Object = obj;
             EntityType = type;
@@ -66,8 +58,6 @@ namespace DynamicTypeDemo.Services
 
     public interface IDynamicObject
     {
-        //DynamicObject DynamicMethods(string method, params object[] Params);
-        //DynamicObject dynamic(object obj);
         DynamicObject Set();
         DynamicObject ToList();
         DynamicObject Where(string field,string operation , object value);
@@ -77,30 +67,6 @@ namespace DynamicTypeDemo.Services
     {
         public object Object;
 
-        /*public DynamicObject DynamicMethods(string method, params object[] ps)
-        {
-            try
-            {
-                object result = null;
-                if (method == "Set")
-                {
-                    result = Set();
-                }
-                else if (method == "Where")
-                {
-                    result = Where(ps[0] as string,ps[1]);
-                }
-                else if (method == "ToList")
-                {
-                    result = ToList();
-                }
-                return new DynamicObject(result, typeof(T));
-            }
-            catch
-            {
-                throw;
-            }
-        }*/
         private DynamicObject dynamic(object obj)
         {
             return new DynamicObject(obj, typeof(T));
@@ -185,6 +151,7 @@ namespace DynamicTypeDemo.Services
         private Model2 db = new Model2();
         private DynamicObject dynamic = null;
         private Type _entityType = null;
+        private Type[] _interfaces = null;
 
         public DynamicEntityService(Type entityType, string entityName)
         {
@@ -195,7 +162,7 @@ namespace DynamicTypeDemo.Services
         }
 
 
-        public DynamicEntityService(int templateId, string entityName)
+        public DynamicEntityService(int templateId, string entityName, Type[] interfaces)
         {
             TableTemplate = db.TableTemplates.Find(templateId);
             if (TableTemplate == null)
@@ -203,6 +170,8 @@ namespace DynamicTypeDemo.Services
                 throw new NotFoundException();
             }
             EntityName = entityName;
+            _interfaces = interfaces;
+
             dynamicDb = new DynamicEntityModel(EntityType);
             dynamic = new DynamicObject(dynamicDb, EntityType);
         }
@@ -219,7 +188,7 @@ namespace DynamicTypeDemo.Services
                     }
                     else
                     {
-                        _entityType = TableTemplate.CreateType(EntityName);
+                        _entityType = TableTemplate.CreateType(EntityName ,null, _interfaces);
                         EntityTypes.Add(EntityName, _entityType);
                     }
                 }
