@@ -13,7 +13,7 @@ namespace DynamicTypeDemo.Entities
         int SYS_ID { get; set; }
     }
 
-    public interface IT_SlaveTable : IT_GeneralTable
+    public interface IT_SlaveTable 
     {
         int SYS_MASTER_ID { get; set; }
     }

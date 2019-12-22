@@ -11,7 +11,7 @@ namespace DynamicTypeDemo
         public Model2()
             : base("name=Model1")
         {
-            Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
+            //Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
             Database.SetInitializer<Model2>(null);
         }
 

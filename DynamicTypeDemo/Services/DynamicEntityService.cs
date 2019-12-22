@@ -116,8 +116,62 @@ namespace DynamicTypeDemo.Services
         }
     }
 
+    public interface IDynamicEntityModel
+    {
+        object GetSet();
+        object GetEntity(object key);
+        void PutEntity(object key, object Entity);
+        object PostEntity(object Entity);
+    }
+    public partial class DynamicEntityModel<T> : DbContext, IDynamicEntityModel
+        where T:class,IT_GeneralTable
+    {
 
-    public partial class DynamicEntityModel : DbContext
+        public DynamicEntityModel()
+            : base("name=Model1")
+        {
+            Database.SetInitializer<DynamicEntityModel>(null);
+            //Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
+        }
+
+        public virtual DbSet<T> Entities { get; set; }
+
+        public object GetEntity(object key)
+        {
+            return this.Entities.Find(key);
+        }
+
+        public object GetSet()
+        {
+            return this.Entities;
+        }
+
+        public object PostEntity(object entity)
+        {
+            Entities.Add(entity as T);
+            SaveChanges();
+            return entity;
+        }
+
+        public void PutEntity(object key, object obj)
+        {
+            T entity = obj as T;
+            if (entity.SYS_ID != (int)key)
+            {
+                throw new BadRequestException();
+            }
+            this.Entry(entity).State = EntityState.Modified;
+            SaveChanges();
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //modelBuilder.RegisterEntityType(T);
+        }
+
+    }
+
+    public partial class DynamicEntityModel : DbContext//, IDynamicEntityModel
     {
         public Type Type { get; set; }
 
@@ -125,7 +179,7 @@ namespace DynamicTypeDemo.Services
             : base("name=Model1")
         {
             Database.SetInitializer<DynamicEntityModel>(null);
-            Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
+            //Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
             Type = type;
         }
 
@@ -141,60 +195,42 @@ namespace DynamicTypeDemo.Services
 
     public class DynamicEntityService
     {
-        static private Dictionary<string, Type> EntityTypes = new Dictionary<string, Type>();
+        //static private Dictionary<string, Type> EntityTypes = new Dictionary<string, Type>();
         public string EntityName { get; set; }
-
+        public Type EntityType { get; set; }
         private DynamicEntityModel dynamicDb;
 
-        public TableTemplate TableTemplate { get; set; }
+        //public TableTemplate TableTemplate { get; set; }
 
-        private Model2 db = new Model2();
         private DynamicObject dynamic = null;
-        private Type _entityType = null;
-        private Type[] _interfaces = null;
+
+        public static TableTemplate GetTemplate(int templateId)
+        {
+            using (Model2 db = new Model2())
+            {
+                var template = db.TableTemplates.Find(templateId);
+                template.Fields.ToList();
+                return template;
+            }
+        }
 
         public DynamicEntityService(Type entityType, string entityName)
         {
             EntityName = entityName;
-            _entityType = entityType;
+            EntityType = entityType;
             dynamicDb = new DynamicEntityModel(EntityType);
             dynamic = new DynamicObject(dynamicDb, EntityType);
         }
-
-
-        public DynamicEntityService(int templateId, string entityName, Type[] interfaces)
+        
+        public DynamicEntityService(TableTemplate template, string entityName, Type[] interfaces)
         {
-            TableTemplate = db.TableTemplates.Find(templateId);
-            if (TableTemplate == null)
-            {
-                throw new NotFoundException();
-            }
             EntityName = entityName;
-            _interfaces = interfaces;
+            EntityType = template.CreateType(EntityName, null, interfaces);
 
             dynamicDb = new DynamicEntityModel(EntityType);
             dynamic = new DynamicObject(dynamicDb, EntityType);
         }
 
-        public Type EntityType
-        {
-            get
-            {
-                if (_entityType == null)
-                {
-                    if (EntityTypes.ContainsKey(EntityName))
-                    {
-                        _entityType = EntityTypes[EntityName];
-                    }
-                    else
-                    {
-                        _entityType = TableTemplate.CreateType(EntityName ,null, _interfaces);
-                        EntityTypes.Add(EntityName, _entityType);
-                    }
-                }
-                return _entityType;
-            }
-        }
 
         public object GetEntities()
         {
@@ -215,6 +251,11 @@ namespace DynamicTypeDemo.Services
                 throw new BadRequestException();
             }
             dynamicDb.Entry(entity).State = EntityState.Modified;
+            dynamicDb.SaveChanges();
+        }
+        public void PostEntity(object entity)
+        {
+            dynamicDb.Set(entity.GetType()).Add(entity);
             dynamicDb.SaveChanges();
         }
     }

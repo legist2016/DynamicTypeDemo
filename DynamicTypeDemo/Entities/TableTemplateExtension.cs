@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicTypeDemo.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -15,25 +16,42 @@ namespace DynamicTypeDemo.Entities
 {
     public static class TableTemplateExtension
     {
+        static Dictionary<string, Type> entityTypes = new Dictionary<string, Type>();
+        
+
+        public static IDynamicEntityModel GetDynamicEntityModel(this Type type)
+        {
+            var modelType = typeof(DynamicEntityModel<>).MakeGenericType(new Type[] { type });
+            return Activator.CreateInstance(modelType) as IDynamicEntityModel;
+        }
+
+        public static Type CreateType(this TableTemplate template, string typeName, Type[] interfaces = null)
+        {
+            return CreateType(template, typeName, typeName, null, interfaces);
+        }
         public static Type CreateType(this TableTemplate template, string typeName, Type parent = null, Type[] interfaces = null)
         {
             return CreateType(template, typeName, typeName, parent,interfaces);
         }
         public static Type CreateType(this TableTemplate template, string typeName , string tableName,Type parent = null, Type[] interfaces =null )
         {
+            if (entityTypes.ContainsKey(typeName))
+            {
+                return entityTypes[typeName];
+            }
             //应用程序域
             AppDomain currentDomain = System.Threading.Thread.GetDomain(); //AppDomain.CurrentDomain;
             //运行并创建类的新实例
             TypeBuilder typeBuilder = null;
             //定义和表示动态程序集的模块
             ModuleBuilder moduleBuilder = null;
+            //定义表示动态程序集
+            AssemblyBuilder assemblyBuilder = null;
             MethodBuilder methodBuilder = null;
             //表示类型属性
             PropertyBuilder propertyBuilder = null;
             //定义表示字段
             FieldBuilder fieldBuilder = null;
-            //定义表示动态程序集
-            AssemblyBuilder assemblyBuilder = null;
             //生成中间语言指令
             ILGenerator ilGenerator = null;
             //帮助生成自定义属性
@@ -98,7 +116,9 @@ namespace DynamicTypeDemo.Entities
             }
 
 
-            return typeBuilder.CreateType();
+            var newtype = typeBuilder.CreateType();
+            entityTypes.Add(typeName, newtype);
+            return newtype;
         }
 
         static void CreateProperty(this TypeBuilder typeBuilder, string name, Type t, int Length ,  bool isKey = false, bool isVirtual = false)
