@@ -3,6 +3,7 @@ using DynamicTypeDemo.Exceptions;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace DynamicTypeDemo.Services
 {
@@ -10,6 +11,7 @@ namespace DynamicTypeDemo.Services
     {
         //object GetSet();
         object GetEntities();
+        object GetEntities(DynamicCondition condition);
         object GetEntity(object key);
         void PutEntity(object key, object entity);
         object PostEntity(object entity);
@@ -72,6 +74,15 @@ namespace DynamicTypeDemo.Services
             //modelBuilder.RegisterEntityType(T);
         }
 
+        public object GetEntities(DynamicCondition condition)
+        {
+            return this.Entities;//.Where(p=>p.SYS_ID.c);
+        }
+
+        static public Expression<Func<T, bool>> GenerateExpression(DynamicCondition condition)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public partial class DynamicEntityModel : DbContext//, IDynamicEntityModel
