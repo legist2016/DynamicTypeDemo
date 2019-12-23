@@ -12,13 +12,13 @@ namespace DynamicTypeDemo
     {
         static void Main(string[] args)
         {
-            var s = "(Id==1 or Name %% \"ffff\") or (Id>=100 or Name =% \"ddd\")and IsDelete==false";
+            var s = "(Name %% \"rrr\\\"dddd\" or Id==1) or (Id>=100 or Name =% \"\")and IsDelete==false";
             Console.WriteLine(s);
             Console.WriteLine("-=解析=-");
             var c = DynamicCondition.Parse(s);
             var exp = c.GenerateExperssion<TableTemplate>();
             var db = new Model2();
-            var list = db.TableTemplates.Where(exp).ToList();
+            var list = db.TableTemplates.Where(exp);
             Console.WriteLine(list.ToString());
             Console.WriteLine("-=Linq=-");
             Console.WriteLine(exp);

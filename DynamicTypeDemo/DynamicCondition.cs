@@ -201,11 +201,11 @@ namespace DynamicTypeDemo
                 int index = 1;
                 Stack<string> strings = new Stack<string>();
                 Dictionary<string, DynamicCondition> exps = new Dictionary<string, DynamicCondition>();
-                var r = new Regex("\"(.*?[^\\\\])\"");
+                var r = new Regex("(\"(.*?[^\\\\])\")|(\"()\")");
                 condition = r.Replace(condition, p =>
                 {
-                    strings.Push(p.Groups[1].Value.Replace("\\\"", "\""));
-                    return "$strings";
+                    strings.Push(p.Groups[2].Value.Replace("\\\"", "\""));
+                    return "$strings ";
                 });
                 Console.WriteLine(condition);
                 strings = new Stack<string>(strings);
