@@ -12,12 +12,14 @@ namespace DynamicTypeDemo
     {
         static void Main(string[] args)
         {
-            var s = "(Id==1 and Name==\"dsfdsf\")or(Id>=100 and Name!=\"\\\"sdfsdfs\")and IsDelete==false";
+            var s = "(Id==1 or Name %% \"ffff\") or (Id>=100 or Name =% \"ddd\")and IsDelete==false";
             Console.WriteLine(s);
             Console.WriteLine("-=解析=-");
             var c = DynamicCondition.Parse(s);
             var exp = c.GenerateExperssion<TableTemplate>();
-            Console.WriteLine(c);
+            var db = new Model2();
+            var list = db.TableTemplates.Where(exp).ToList();
+            Console.WriteLine(list.ToString());
             Console.WriteLine("-=Linq=-");
             Console.WriteLine(exp);
             Console.ReadKey();

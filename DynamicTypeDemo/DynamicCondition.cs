@@ -103,13 +103,13 @@ namespace DynamicTypeDemo
                 case "<=":
                     Operation = DynamicConditionOperation.LE;
                     break;
-                case "Ct":
+                case "%%":
                     Operation = DynamicConditionOperation.Ct;
                     break;
-                case "Sw":
+                case "%=":
                     Operation = DynamicConditionOperation.Sw;
                     break;
-                case "Ew":
+                case "=%":
                     Operation = DynamicConditionOperation.Ew;
                     break;
                 default:
@@ -204,12 +204,12 @@ namespace DynamicTypeDemo
                 var r = new Regex("\"(.*?[^\\\\])\"");
                 condition = r.Replace(condition, p =>
                 {
-                    strings.Push(p.Value.Replace("\\\"", "\""));
+                    strings.Push(p.Groups[1].Value.Replace("\\\"", "\""));
                     return "$strings";
                 });
                 Console.WriteLine(condition);
                 strings = new Stack<string>(strings);
-                r = new Regex("([_a-zA-Z]\\w*?)\\s*([=!<>]{1,2})\\s*([\\w\\.$]+)");
+                r = new Regex("([_a-zA-Z]\\w*?)\\s*([=!<>%]{1,2})\\s*([\\w\\.$]+)");
                 var f = new Regex("\\d+\\.\\d+");
                 var i = new Regex("\\d+");
                 condition = r.Replace(condition, p =>
@@ -314,7 +314,13 @@ namespace DynamicTypeDemo
             return condition + new DynamicCondition(field, operation, value);
         }
 
-        static public Expression GenerateExperssion<T>(this DynamicCondition condition, Expression param = null)
+        static public Expression<Func<T, bool>> GenerateExperssion<T>(this DynamicCondition condition)
+        {
+            var param = Expression.Parameter(typeof(T));
+            return Expression.Lambda<Func<T, bool>>(condition.GenerateExperssion(param),param);
+        }
+
+        static public Expression GenerateExperssion(this DynamicCondition condition, Expression param = null)
         {
             /*var param = Expression.Parameter(typeof(T));
             var property = Expression.PropertyOrField(param, field);
@@ -324,7 +330,7 @@ namespace DynamicTypeDemo
             Expression left = null;
             if (param == null)
             {
-                param = Expression.Parameter(typeof(T));
+                
             }
             if (condition.Operation == DynamicConditionOperation.And)
             {
@@ -333,14 +339,14 @@ namespace DynamicTypeDemo
                 {
                     if(left == null)
                     {
-                        left = branch.GenerateExperssion<T>(param);
+                        left = branch.GenerateExperssion(param);
                     }else if (body == null)
                     {
-                        body = Expression.AndAlso(left, branch.GenerateExperssion<T>(param));
+                        body = Expression.AndAlso(left, branch.GenerateExperssion(param));
                     }
                     else
                     {
-                        body = Expression.AndAlso(body, branch.GenerateExperssion<T>(param));
+                        body = Expression.AndAlso(body, branch.GenerateExperssion(param));
                     }
                     
                 }
@@ -351,15 +357,15 @@ namespace DynamicTypeDemo
                 {
                     if (left == null)
                     {
-                        left = branch.GenerateExperssion<T>(param);
+                        left = branch.GenerateExperssion(param);
                     }
                     else if (body == null)
                     {
-                        body = Expression.OrElse(left, branch.GenerateExperssion<T>(param));
+                        body = Expression.OrElse(left, branch.GenerateExperssion(param));
                     }
                     else
                     {
-                        body = Expression.OrElse(body, branch.GenerateExperssion<T>(param));
+                        body = Expression.OrElse(body, branch.GenerateExperssion(param));
                     }
 
                 }
