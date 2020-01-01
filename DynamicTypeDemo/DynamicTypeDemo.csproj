@@ -56,6 +56,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynamicCondition.cs" />
+    <Compile Include="Entities\DTS_TableDefine.cs" />
+    <Compile Include="Entities\DTS_Template.cs" />
+    <Compile Include="Entities\DTS_TemplateDetail.cs" />
+    <Compile Include="Entities\IDTS_Table.cs" />
     <Compile Include="Entities\IT_Tables.cs" />
     <Compile Include="Entities\DTS_Metadata.cs" />
     <Compile Include="Exceptions\Exception.cs" />
@@ -66,7 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\TableTemplate.cs" />
     <Compile Include="Entities\TableTemplateField.cs" />
-    <Compile Include="Entities\TableTemplateExtension.cs" />
+    <Compile Include="Entities\DynamicExtension.cs" />
     <Compile Include="Services\TableTemplateService.cs" />
     <Compile Include="T_CM_PRODUCT.cs" />
   </ItemGroup>

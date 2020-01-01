@@ -1,4 +1,5 @@
-﻿using DynamicTypeDemo.Services;
+﻿using DynamicTypeDemo.Entities;
+using DynamicTypeDemo.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,17 +13,86 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace DynamicTypeDemo.Entities
+namespace DynamicTypeDemo
 {
-    public static class TableTemplateExtension
+    public static class DynamicExtension
     {
         static Dictionary<string, Type> entityTypes = new Dictionary<string, Type>();
         
+        public static object GetKey(this object obj)
+        {
+            var type = obj.GetType();
+            object result = null;
+            foreach(var property in type.GetProperties())
+            {
+                if (property.IsDefined(typeof(KeyAttribute)))
+                {
+                    if (result != null)
+                    {
+                        throw new Exception("多个关键字");
+                    }
+                    result =  property.GetValue(obj);
+                }
+            }
+            return result;
+        }
+
+        public static TableTemplate ToTemplate(this Type type, string name = null)
+        {
+            var table = new TableTemplate()
+            {
+                Name = type.Name
+            };
+            if (name != null)
+            {
+                table.Name = name;
+            }
+            foreach(var property in type.GetProperties())
+            {
+                table.Fields.Add(property.ToTemplateField());
+            }
+            return table;
+        }
+
+        public static TableTemplateField ToTemplateField(this PropertyInfo property)
+        {
+            var field =new TableTemplateField()
+            {
+                Name = property.Name,
+                Title = property.Name
+            };
+            var type = property.PropertyType;
+            if (type == typeof(int)) { field.Type = TableTemplateFieldType.Int; }
+            else if (type == typeof(string)) { field.Type = TableTemplateFieldType.String; }
+            else if (type == typeof(bool)) { field.Type = TableTemplateFieldType.Boolean; }
+            else { field.Type = TableTemplateFieldType.String; }
+            if(field.Type == TableTemplateFieldType.String)
+            {
+                var max = property.GetCustomAttribute(typeof(MaxLengthAttribute)) as MaxLengthAttribute;
+                if(max != null)
+                {
+                    field.Length = max.Length;
+                }
+                else
+                {
+                    field.Length = 20;
+                }
+            }
+            if (property.IsDefined(typeof(KeyAttribute)))
+            {
+                field.IsKey = true;
+            }
+            return field;
+        }
 
         public static IDynamicEntityModel GetDynamicEntityModel(this Type type)
         {
             var modelType = typeof(DynamicEntityModel<>).MakeGenericType(new Type[] { type });
             return Activator.CreateInstance(modelType) as IDynamicEntityModel;
+        }
+        public static Type CreateType(this TableTemplate template,  Type[] interfaces = null)
+        {
+            return CreateType(template, template.Name, template.Name, null, interfaces);
         }
 
         public static Type CreateType(this TableTemplate template, string typeName, Type[] interfaces = null)

@@ -12,6 +12,12 @@ namespace DynamicTypeDemo
     {
         static void Main(string[] args)
         {
+            var temp = typeof(DTS_Metadata).ToTemplate();
+            var service = new TableTemplateService();
+            service.PostTableTemplate(typeof(DTS_TableDefine).ToTemplate());
+            service.PostTableTemplate(typeof(DTS_Template).ToTemplate());
+            service.PostTableTemplate(typeof(DTS_TemplateDetail).ToTemplate());
+            return;
             var s = "(Name %% \"rrr\\\"dddd\" or Id==1) or (Id>=100 or Name =% \"\")and IsDelete==false";
             Console.WriteLine(s);
             Console.WriteLine("-=解析=-");

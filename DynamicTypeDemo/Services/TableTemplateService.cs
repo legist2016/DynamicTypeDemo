@@ -60,6 +60,10 @@ namespace DynamicTypeDemo.Services
         
         public void PostTableTemplate(TableTemplate tableTemplate)
         {
+            if(db.TableTemplates.Where(p=>p.Name == tableTemplate.Name).Count() > 0)
+            {
+                throw new BadRequestException("此名称已存在");
+            }
             db.TableTemplates.Add(tableTemplate);
             db.SaveChanges();            
         }

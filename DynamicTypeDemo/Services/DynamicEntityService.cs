@@ -18,7 +18,7 @@ namespace DynamicTypeDemo.Services
         object DeleteEntity(object key);
     }
     public partial class DynamicEntityModel<T> : DbContext, IDynamicEntityModel
-        where T:class,IT_GeneralTable
+        where T:class//,IT_GeneralTable
     {
 
         public DynamicEntityModel()
@@ -50,7 +50,8 @@ namespace DynamicTypeDemo.Services
         public void PutEntity(object key, object obj)
         {
             T entity = obj as T;
-            if (entity.SYS_ID != (int)key)
+            
+            if (entity.GetKey() != key)
             {
                 throw new BadRequestException();
             }
@@ -118,5 +119,23 @@ namespace DynamicTypeDemo.Services
             }
         }
 
+        public static object GetEntities(int templateId)
+        {
+            var db = GetTemplate(templateId).CreateType().GetDynamicEntityModel();
+            return db.GetEntities();
+        }
+
+        public static object GetEntities(int templateId, string condition)
+        {
+            var db = GetTemplate(templateId).CreateType().GetDynamicEntityModel();
+            var c = DynamicCondition.Parse(condition);
+            return db.GetEntities(c);
+        }
+
+        public static object GetEntity(int templateId, object id)
+        {
+            var db = GetTemplate(templateId).CreateType().GetDynamicEntityModel();
+            return db.GetEntity(id);
+        }
     }
 }
