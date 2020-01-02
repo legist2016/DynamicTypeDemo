@@ -109,6 +109,10 @@ namespace DynamicTypeDemo
             {
                 return entityTypes[typeName];
             }
+            if (interfaces == null)
+            {
+                interfaces = Type.EmptyTypes;
+            }
             //应用程序域
             AppDomain currentDomain = System.Threading.Thread.GetDomain(); //AppDomain.CurrentDomain;
             //运行并创建类的新实例
@@ -181,7 +185,8 @@ namespace DynamicTypeDemo
                 {
                     t = typeof(string);
                 }
-                typeBuilder.CreateProperty(field.Name, t, field.Length);
+                typeBuilder.CreateProperty(field.Name, t, field.Length,field.IsKey);
+                
 
             }
 
@@ -226,7 +231,10 @@ namespace DynamicTypeDemo
             propertyBuilder.SetSetMethod(methodBuilder);
         }
 
-
+        public static string SQLGenerateCreateTable(this Type type)
+        {
+            return type.SQLGenerateCreateTable(type.Name);
+        }
 
         public static string SQLGenerateCreateTable(this Type type, string tableName)
         {

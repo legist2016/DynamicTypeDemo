@@ -20,11 +20,11 @@ namespace DynamicTableTemplateManager
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            /*config.Routes.MapHttpRoute(
-                name: "ActionApi",
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { }
-            );*/
+            config.Routes.MapHttpRoute(
+                name: "TableApi",
+                routeTemplate: "tapi/{controller}/{tempid}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
         }
     }
 }

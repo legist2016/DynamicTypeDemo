@@ -14,9 +14,13 @@ namespace DynamicTypeDemo
         {
             var temp = typeof(DTS_Metadata).ToTemplate();
             var service = new TableTemplateService();
-            service.PostTableTemplate(typeof(DTS_TableDefine).ToTemplate());
+            System.Diagnostics.Debug.WriteLine(typeof(DTS_TableDefine).ToTemplate().CreateType().SQLGenerateCreateTable());
+            System.Diagnostics.Debug.WriteLine(typeof(DTS_Template).ToTemplate().CreateType().SQLGenerateCreateTable());
+            System.Diagnostics.Debug.WriteLine(typeof(DTS_TemplateDetail).ToTemplate().CreateType().SQLGenerateCreateTable());
+            /*service.PostTableTemplate(typeof(DTS_TableDefine).ToTemplate());
             service.PostTableTemplate(typeof(DTS_Template).ToTemplate());
-            service.PostTableTemplate(typeof(DTS_TemplateDetail).ToTemplate());
+            service.PostTableTemplate(typeof(DTS_TemplateDetail).ToTemplate());*/
+            Console.ReadKey();
             return;
             var s = "(Name %% \"rrr\\\"dddd\" or Id==1) or (Id>=100 or Name =% \"\")and IsDelete==false";
             Console.WriteLine(s);
@@ -61,6 +65,7 @@ namespace DynamicTypeDemo
 
         static void DoSomething()
         {
+            /*
             var cond = new DynamicCondition("ND", "==", "rtyrty\\\"1999").And("SYS_ID","==", 1);
             cond = cond.And(new DynamicCondition("FLH","==","XZ11").Or("FLH", "==", "\\\"XZ12"));
             Console.WriteLine(cond);
@@ -74,7 +79,7 @@ namespace DynamicTypeDemo
             var list = db.GetEntities();
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(list);
             //Console.WriteLine(json);
-
+            */
         }
 
         static DynamicCondition parsecondition(string condition)
