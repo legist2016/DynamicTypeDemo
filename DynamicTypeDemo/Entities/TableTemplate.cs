@@ -26,7 +26,7 @@ namespace DynamicTypeDemo.Entities
 
         public bool IsDelete { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public virtual ICollection<TableTemplateField> Fields { get; set; }
     }
 }

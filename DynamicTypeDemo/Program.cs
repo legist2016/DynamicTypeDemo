@@ -27,7 +27,7 @@ namespace DynamicTypeDemo
             Console.WriteLine("-=解析=-");
             var c = DynamicCondition.Parse(s);
             var exp = c.GenerateExperssion<TableTemplate>();
-            var db = new Model2();
+            var db = new TemplateModel();
             var list = db.TableTemplates.Where(exp);
             Console.WriteLine(list.ToString());
             Console.WriteLine("-=Linq=-");
@@ -214,7 +214,7 @@ namespace DynamicTypeDemo
 
             var sql = template.SQLGenerateCreateTable("T_100");
             var type = template.CreateType("T_100", "T_100");
-            using (var db = new Model1(new List<Type>() { type }))
+            ///using (var db = new Model1(new List<Type>() { type }))
             {
                 /*//var tran = db.Database.BeginTransaction();
                 db.Database.ExecuteSqlCommand(sql);
@@ -222,7 +222,7 @@ namespace DynamicTypeDemo
                 tran.Rollback();*/
                 //db.Database.Connection.
                 //var ss = System.Data.Entity.Core.Common.DbProviderServices.
-                var list = db.getdata(type, "sys_id", 1);
+               // var list = db.getdata(type, "sys_id", 1);
 
             }
             

@@ -124,7 +124,7 @@ namespace DynamicTypeDemo.Services
             }
             else
             {
-                using (Model2 db = new Model2())
+                using (TemplateModel db = new TemplateModel())
                 {
                     template = db.TableTemplates.Find(tid);
                     template.Fields.ToList();

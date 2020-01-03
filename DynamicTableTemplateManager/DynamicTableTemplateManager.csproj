@@ -107,6 +107,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="web\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DynamicTypeDemo\DynamicTypeDemo.csproj">

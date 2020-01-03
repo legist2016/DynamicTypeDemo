@@ -12,21 +12,31 @@ using DynamicTypeDemo.Exceptions;
 
 namespace DynamicTableTemplateManager.Controllers
 {
-    [RoutePrefix("tapi/table")]
+    //[RoutePrefix("tapi/table")]
     public class tableController : ApiController
     {
         private DynamicEntityService service = new DynamicEntityService();
 
         // GET: api/table
-        public IHttpActionResult GetTable(int tempid)
+        [HttpGet]
+        public IHttpActionResult entities(int tempid)
         {
             service.Init(tempid);
             var list = service.GetEntities(); // db.TableTemplates.Where(p=>p.IsDelete == false);
             return Ok(list);
         }
 
+        [HttpGet]
+        public IHttpActionResult define(int tempid)
+        {
+            service.Init(tempid);
+            var list = service.GetTemplate(); // db.TableTemplates.Where(p=>p.IsDelete == false);
+            return Ok(list);
+        }
+
         // GET: api/template/5
-        [ResponseType(typeof(TableTemplate))]
+        //[ResponseType(typeof(TableTemplate))]
+        [HttpGet]
         public IHttpActionResult GetTableTemplate(int tempid,int id)
         {
             service.Init(tempid);

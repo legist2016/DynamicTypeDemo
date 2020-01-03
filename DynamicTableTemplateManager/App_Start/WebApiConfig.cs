@@ -22,7 +22,7 @@ namespace DynamicTableTemplateManager
 
             config.Routes.MapHttpRoute(
                 name: "TableApi",
-                routeTemplate: "tapi/{controller}/{tempid}/{id}",
+                routeTemplate: "api/{controller}/{tempid}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
         }

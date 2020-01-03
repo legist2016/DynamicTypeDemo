@@ -6,13 +6,13 @@ namespace DynamicTypeDemo
     using System.Linq;
     using DynamicTypeDemo.Entities;
 
-    public partial class Model2 : DbContext
+    public partial class TemplateModel : DbContext
     {
-        public Model2()
+        public TemplateModel()
             : base("name=Model1")
         {
             //Database.Log = (log) => { System.Diagnostics.Debug.WriteLine(log); };
-            Database.SetInitializer<Model2>(null);
+            Database.SetInitializer<TemplateModel>(null);
         }
 
         //public virtual DbSet<T_CM_PRODUCT> T_CM_PRODUCT { get; set; }

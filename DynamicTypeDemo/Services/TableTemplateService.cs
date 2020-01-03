@@ -13,11 +13,17 @@ namespace DynamicTypeDemo.Services
 
     public class TableTemplateService: IDisposable
     {
-        private Model2 db = new Model2();
+        private TemplateModel db = new TemplateModel();
 
         public IEnumerable<TableTemplate> GetTableTemplate()
         {
-            var list = db.TableTemplates.Where(p => p.IsDelete == false);
+            //IEnumerable<TableTemplate> list = null;
+            //using (var db = new TemplateModel())
+            var    list = db.TableTemplates.Where(p => p.IsDelete == false).ToList();
+            
+            list.ForEach(p => {
+                db.Entry(p).State = EntityState.Detached;
+            });
             return list;
         }
 
