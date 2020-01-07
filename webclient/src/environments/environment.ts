@@ -7,6 +7,7 @@ export const environment = {
     publicBase:"/",
     config: {
       apiUrl:{
+        Table:"http://localhost:4062/api/table",
         TableTemplate:"http://localhost:4062/api/template",
         TableTemplateField:"http://localhost:4062/api/template",
       },

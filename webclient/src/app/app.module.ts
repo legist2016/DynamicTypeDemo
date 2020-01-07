@@ -34,6 +34,7 @@ import { TableTemplateComponent } from './manager/table-template/table-template.
 import { TableTemplateEditComponent } from './manager/table-template/table-template-edit/table-template-edit.component';
 import { AgButtonsCellRanderComponent } from './ag-buttons-cell-rander/ag-buttons-cell-rander.component';
 import { TableTemplateFieldComponent } from './manager/table-template-field/table-template-field.component';
+import { DynamicTableComponent } from './dynamic-table/dynamic-table.component';
 
 @NgModule({
   imports: [
@@ -44,6 +45,7 @@ import { TableTemplateFieldComponent } from './manager/table-template-field/tabl
     RouterModule.forRoot([
       { path: "", component: HomeComponent },
       { path: "manager", component: ManagerComponent },
+      { path: "table/:tableId", component: DynamicTableComponent },
 
     ]),
     AgGridModule.withComponents([AgButtonsCellRanderComponent])
@@ -56,7 +58,7 @@ import { TableTemplateFieldComponent } from './manager/table-template-field/tabl
     ProductsComponent,
     ProductEditComponent,
     ManagerMenuComponent,
-    PopupComponent, WindowConfirmComponent, TableTemplateComponent, TableTemplateEditComponent, AgButtonsCellRanderComponent, TableTemplateFieldComponent, 
+    PopupComponent, WindowConfirmComponent, TableTemplateComponent, TableTemplateEditComponent, AgButtonsCellRanderComponent, TableTemplateFieldComponent, DynamicTableComponent, 
   ],
   bootstrap: [AppComponent],
   providers: [

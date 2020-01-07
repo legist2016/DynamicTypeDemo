@@ -56,7 +56,7 @@ export function Querying() {
 @Injectable({
   providedIn: "root"
 })
-export class DataService {
+export class  DataService {
   constructor(public http: HttpClient) {
   }
 
@@ -76,6 +76,19 @@ export class DataService {
       .toPromise<any>()
       .then(data => {
         this.data[type + "_list"] = data;
+      })
+  }
+
+  @Querying() @CatchErr()
+  loadTableDef(type, params?,after?){
+    let url = environment.config.apiUrl[type]
+    if(params){
+      url = url + '/' + params
+    }
+    return this.http.get(url)
+      .toPromise<any>()
+      .then(data => {
+        this.data[type + "_define"] = data;
       })
   }
 

@@ -198,7 +198,8 @@ namespace DynamicTypeDemo
 
         static void CreateProperty(this TypeBuilder typeBuilder, string name, Type t, int Length ,  bool isKey = false, bool isVirtual = false)
         {
-            var fieldBuilder = typeBuilder.DefineField("field_" + name, t, FieldAttributes.Private);
+            //var fieldBuilder = typeBuilder.DefineField("field_" + name, t, FieldAttributes.Private);
+            var fieldBuilder = typeBuilder.DefineField(name, t, FieldAttributes.Private);
             var propertyBuilder = typeBuilder.DefineProperty(name, System.Reflection.PropertyAttributes.HasDefault, t, null);
             var methodAttrs = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
             if(isVirtual) {
