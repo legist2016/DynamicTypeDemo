@@ -1,17 +1,7 @@
-<div class='down'>
+<ul>
     <li routerLink='/'>首页</li>
     <li (click)="do('pending orders')" [ngClass]="{'actived':actived=='pending orders'}">待处理申请</li>
     <li (click)="do('products')" [ngClass]="{'actived':actived=='products'}">产品管理</li>
     <li (click)="do('all orders')" [ngClass]="{'actived':actived=='all orders'}">全部申请</li>
-    <li></li>
-    <div></div>
-</div>
-<div class='up'>
-    <li routerLink='/'>首页</li>
-    <li (click)="do('pending orders')" [ngClass]="{'actived':actived=='pending orders'}">待处理申请</li>
-    <li (click)="do('products')" [ngClass]="{'actived':actived=='products'}">产品管理</li>
-    <li (click)="do('all orders')" [ngClass]="{'actived':actived=='all orders'}">全部申请</li>
-    <li></li>
-    <div></div>
-</div>
+</ul>
 <div></div>
