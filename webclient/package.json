@@ -14,7 +14,7 @@
     "@ag-grid-community/all-modules": "^22.0.0",
     "@ag-grid-community/angular": "^22.0.0",
     "@ag-grid-community/core": "^22.0.0",
-    "@angular-devkit/build-angular": "^0.803.16",
+    "@angular-devkit/build-angular": "^15.0.4",
     "@angular/common": "8.0.0",
     "@angular/compiler": "^8.2.13",
     "@angular/core": "^8.0.0",
@@ -31,7 +31,7 @@
     "zone.js": "0.9.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.803.6",
+    "@angular-devkit/build-angular": "~15.0.4",
     "@angular/cli": "~8.3.6",
     "@angular/compiler-cli": "~8.2.8",
     "@angular/language-service": "~8.2.8",
